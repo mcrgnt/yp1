@@ -67,7 +67,7 @@ func (t *DefaultHandler) parsePath(r *http.Request) []string {
 
 func (t *DefaultHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var (
-		statusHeader int = 200
+		statusHeader = 200
 		err          error
 	)
 	defer func() {
