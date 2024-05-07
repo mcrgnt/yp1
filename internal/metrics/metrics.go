@@ -50,9 +50,7 @@ type PollMetricsParams struct {
 }
 
 func PollMetrics(params *PollMetricsParams) {
-	fmt.Println("poll")
 	runtime.ReadMemStats(memStats)
-
 	val := reflect.ValueOf(memStats).Elem()
 	for _, name := range PollMetricsFromMemStatsList {
 		updateParams := &storage.StorageParams{

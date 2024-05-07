@@ -13,12 +13,12 @@ type Reporter struct {
 }
 
 type ReportParams struct {
-	Url string
+	URL string
 }
 
 func (t *Reporter) Report(params *ReportParams) {
 	t.ctx.LogInformational(fmt.Sprintf("new report with params: %v", *params))
-	resp, err := http.Post(params.Url, "", nil)
+	resp, err := http.Post(params.URL, "", nil)
 	if err != nil {
 		t.ctx.LogError(fmt.Sprintf("report response: %v", err))
 		return
