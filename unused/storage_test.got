@@ -1,0 +1,31 @@
+package storage
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestNewMemStorage(t *testing.T) {
+	{
+		actual := NewMemStorage(&NewMemStorageParams{})
+		if reflect.TypeOf(actual) != reflect.TypeOf(&Memory{}) {
+			t.Error()
+		}
+	}
+	{
+		actual := NewMemStorage(&NewMemStorageParams{
+			Type: "",
+		})
+		if reflect.TypeOf(actual) != reflect.TypeOf(&Memory{}) {
+			t.Error()
+		}
+	}
+	{
+		actual := NewMemStorage(&NewMemStorageParams{
+			Type: "badType",
+		})
+		if reflect.TypeOf(actual) != reflect.TypeOf(&Memory{}) {
+			t.Error()
+		}
+	}
+}
