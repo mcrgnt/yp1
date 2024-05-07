@@ -93,12 +93,16 @@ type ReportMetricsParams struct {
 }
 
 func ReportMetrics(params *ReportMetricsParams) (err error) {
+	var (
+		resp *http.Response
+	)
 	for _, name := range PollMetricsFromMemStatsList {
 		storageParams := &storage.StorageParams{
 			Name: name,
 		}
 		params.Storage.Get(storageParams)
-		_, err = http.Post(fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value), "text/plain", nil)
+		resp, err = http.Post(fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value), "text/plain", nil)
+		_ = resp.Body.Close()
 		if err != nil {
 			err = fmt.Errorf("post to server: %v", err)
 			return
