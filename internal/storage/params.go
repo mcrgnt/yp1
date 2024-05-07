@@ -5,13 +5,13 @@ import (
 	"strconv"
 )
 
-type Update struct {
+type StorageParams struct {
 	Type  string
 	Name  string
 	Value any
 }
 
-func (t *Update) ValidateType() (err error) {
+func (t *StorageParams) ValidateType() (err error) {
 	switch t.Type {
 	case "gauge", "counter":
 	default:
@@ -20,14 +20,14 @@ func (t *Update) ValidateType() (err error) {
 	return
 }
 
-func (t *Update) ValidateName() (err error) {
+func (t *StorageParams) ValidateName() (err error) {
 	if t.Name == "" {
 		err = fmt.Errorf("validate name: empty metric name not allowed")
 	}
 	return
 }
 
-func (t *Update) ValidateValue() (err error) {
+func (t *StorageParams) ValidateValue() (err error) {
 	switch t.Type {
 	case "gauge":
 		t.Value, err = strconv.ParseFloat(t.Value.(string), 64)

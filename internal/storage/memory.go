@@ -17,8 +17,9 @@ func NewMemory() *Memory {
 	}
 }
 
-func (t *Memory) Update(params *Update) {
+func (t *Memory) Update(params *StorageParams) {
 	t.mu.Lock()
+	defer t.mu.Unlock()
 	switch params.Type {
 	case "gauge":
 		t.Gauges[params.Name] = params.Value.(float64)
@@ -26,5 +27,19 @@ func (t *Memory) Update(params *Update) {
 		value := t.Counters[params.Name]
 		t.Counters[params.Name] = value + params.Value.(int64)
 	}
-	t.mu.Unlock()
+}
+
+func (t *Memory) Get(params *StorageParams) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if v, ok := t.Gauges[params.Name]; ok {
+		params.Type = "gauge"
+		params.Value = v
+		return
+	}
+	if v, ok := t.Counters[params.Name]; ok {
+		params.Type = "counter"
+		params.Value = v
+		return
+	}
 }

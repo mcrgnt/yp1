@@ -1,7 +1,8 @@
 package storage
 
 type MemStorage interface {
-	Update(params *Update)
+	Update(params *StorageParams)
+	Get(params *StorageParams)
 }
 
 type NewMemStorageParams struct {

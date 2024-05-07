@@ -32,7 +32,7 @@ func (t *DefaultHandler) handleUpdate(r *http.Request, pathChunks []string) (sta
 		return
 	}
 
-	updateParams := &storage.Update{
+	updateParams := &storage.StorageParams{
 		Type:  pathChunks[1],
 		Name:  pathChunks[2],
 		Value: pathChunks[3],
