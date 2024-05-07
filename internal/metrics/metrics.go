@@ -102,11 +102,11 @@ func ReportMetrics(params *ReportMetricsParams) (err error) {
 		}
 		params.Storage.Get(storageParams)
 		resp, err = http.Post(fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value), "text/plain", nil)
-		_ = resp.Body.Close()
 		if err != nil {
 			err = fmt.Errorf("post to server: %v", err)
 			return
 		}
+		_ = resp.Body.Close()
 	}
 	return
 }
