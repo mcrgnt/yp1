@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"yp1/internal/api"
-	"yp1/internal/storage"
+
+	"github.com/mcrgnt/yp1/internal/api"
+	"github.com/mcrgnt/yp1/internal/storage"
 
 	"github.com/microgiantya/logger"
 )
