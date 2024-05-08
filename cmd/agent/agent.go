@@ -29,15 +29,12 @@ type Agent struct {
 
 func NewAgent(ctx context.Context) (agent *Agent, err error) {
 	agent = &Agent{
-		Address: "localhost:8080",
 		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
 			Severity:       7,
 			UniqueIDPrefix: "srv",
 			Version:        AgentVersion,
 		}),
-		Storage:        storage.NewMemStorage(&storage.NewMemStorageParams{}),
-		PollInterval:   "2",
-		ReportInterval: "10",
+		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{}),
 	}
 	agent.paramsParseFlag()
 	// err = agent.paramsParseEnv()

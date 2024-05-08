@@ -26,7 +26,6 @@ type Server struct {
 
 func NewServer(ctx context.Context) (server *Server, err error) {
 	server = &Server{
-		Address: "localhost:8080",
 		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
 			Severity:       7,
 			UniqueIDPrefix: "srv",
