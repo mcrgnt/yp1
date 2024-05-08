@@ -103,7 +103,7 @@ func ReportMetrics(params *ReportMetricsParams) {
 		storageParams := &storage.StorageParams{
 			Name: name,
 		}
-		params.Storage.Get(storageParams)
+		params.Storage.GetByName(storageParams)
 		reporter.Report(&reporter.ReportParams{
 			Ctx: context.Background(),
 			URL: fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value),

@@ -458,7 +458,7 @@ func TestMemory_Equal_Get(t *testing.T) {
 				Counters: tt.fields.Counters,
 				//				mu:       tt.fields.mu,
 			}
-			tr.Get(tt.args.params)
+			tr.GetByName(tt.args.params)
 			assert.Equal(t, *tt.args.params, *tt.expected)
 		})
 	}
@@ -595,7 +595,7 @@ func TestMemory_NotEqual_Get(t *testing.T) {
 				Counters: tt.fields.Counters,
 				//				mu:       tt.fields.mu,
 			}
-			tr.Get(tt.args.params)
+			tr.GetByName(tt.args.params)
 			assert.NotEqual(t, *tt.args.params, *tt.expected)
 		})
 	}

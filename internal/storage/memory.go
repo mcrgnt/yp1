@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -29,7 +30,7 @@ func (t *Memory) Update(params *StorageParams) {
 	}
 }
 
-func (t *Memory) Get(params *StorageParams) {
+func (t *Memory) GetByName(params *StorageParams) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if v, ok := t.Gauges[params.Name]; ok {
@@ -42,4 +43,35 @@ func (t *Memory) Get(params *StorageParams) {
 		params.Value = v
 		return
 	}
+}
+
+func (t *Memory) GetByType(params *StorageParams) (err error) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	switch params.Type {
+	case "gauge":
+		if v, ok := t.Gauges[params.Name]; ok {
+			params.Value = v
+			return
+		}
+	case "counter":
+		if v, ok := t.Counters[params.Name]; ok {
+			params.Value = v
+			return
+		}
+	}
+	err = fmt.Errorf("metric not found: %s", params.Name)
+	return
+}
+
+func (t *Memory) GetAll() (data string) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	for k, v := range t.Gauges {
+		data += fmt.Sprintf("%s: %v\r\n", k, v)
+	}
+	for k, v := range t.Counters {
+		data += fmt.Sprintf("%s: %v\r\n", k, v)
+	}
+	return
 }

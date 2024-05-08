@@ -35,14 +35,10 @@ func NewAPI(params *NewAPIParams) (api *API) {
 		storage: params.Storage,
 	}
 
-	api.srv.Handler = &DefaultHandler{
-		storage: api.storage,
-		ctx: logger.NewLoggerContext(api.ctx, &logger.LoggerInitParams{
-			Severity:       7,
-			UniqueIDPrefix: "hdl",
-			Version:        "v-",
-		}),
-	}
+	api.srv.Handler = NewDefaultHandler(&NewDefaultHandlerParams{
+		Storage: params.Storage,
+		Ctx:     params.Ctx,
+	}).R
 	return
 }
 
