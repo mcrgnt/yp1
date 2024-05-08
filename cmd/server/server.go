@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"sync"
 
@@ -33,7 +34,7 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 		}),
 		wg: &sync.WaitGroup{},
 	}
-	// server.paramsParseFlag()
+	server.paramsParseFlag()
 	// err = server.paramsParseEnv()
 	// if err != nil {
 	// 	return
@@ -54,10 +55,10 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 // 	return env.Parse(t)
 // }
 
-// func (t *Server) paramsParseFlag() {
-// 	flag.StringVar(&t.Address, "a", "localhost:8080", "")
-// 	flag.Parse()
-// }
+func (t *Server) paramsParseFlag() {
+	flag.StringVar(&t.Address, "a", "localhost:8080", "")
+	flag.Parse()
+}
 
 func (t *Server) report() {
 	t.ctx.LogInformational(fmt.Sprintf("address: %s", t.Address))

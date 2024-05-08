@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"time"
 
@@ -38,7 +39,7 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 		PollInterval:   "2",
 		ReportInterval: "10",
 	}
-	// agent.paramsParseFlag()
+	agent.paramsParseFlag()
 	// err = agent.paramsParseEnv()
 	// if err != nil {
 	// 	return
@@ -61,12 +62,12 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 // 	return env.Parse(t)
 // }
 
-// func (t *Agent) paramsParseFlag() {
-// 	flag.StringVar(&t.Address, "a", "localhost:8080", "")
-// 	flag.StringVar(&t.PollInterval, "p", "2", "")
-// 	flag.StringVar(&t.ReportInterval, "r", "10", "")
-// 	flag.Parse()
-// }
+func (t *Agent) paramsParseFlag() {
+	flag.StringVar(&t.Address, "a", "localhost:8080", "")
+	flag.StringVar(&t.PollInterval, "p", "2", "")
+	flag.StringVar(&t.ReportInterval, "r", "10", "")
+	flag.Parse()
+}
 
 func (t *Agent) report() {
 	t.ctx.LogInformational(fmt.Sprintf("address: %v", t.Address))
