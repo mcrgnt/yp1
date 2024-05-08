@@ -46,7 +46,7 @@ func TestDefaultHandler_handleUpdate(t *testing.T) {
 			args: args{
 				r: httptest.NewRequest(http.MethodPost, "/test1", nil),
 			},
-			wantStatusHeader: http.StatusBadRequest,
+			wantStatusHeader: http.StatusNotFound,
 			wantErr:          true,
 		},
 		{
