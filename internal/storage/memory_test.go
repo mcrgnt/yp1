@@ -54,7 +54,7 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -125,7 +125,7 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Update(tt.args.params)
 			assert.Equal(t, tt.fields.Gauges, tt.expected.Gauges)
@@ -137,7 +137,7 @@ func TestMemory_GaugesNotEqual_Update(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -190,7 +190,7 @@ func TestMemory_GaugesNotEqual_Update(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Update(tt.args.params)
 			assert.NotEqual(t, tt.fields.Gauges, tt.expected.Gauges)
@@ -202,7 +202,7 @@ func TestMemory_CountersEqual_Update(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -255,7 +255,7 @@ func TestMemory_CountersEqual_Update(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Update(tt.args.params)
 			assert.Equal(t, tt.fields.Counters, tt.expected.Counters)
@@ -267,7 +267,7 @@ func TestMemory_CountersNotEqual_Update(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -320,7 +320,7 @@ func TestMemory_CountersNotEqual_Update(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Update(tt.args.params)
 			assert.NotEqual(t, tt.fields.Counters, tt.expected.Counters)
@@ -332,7 +332,7 @@ func TestMemory_Equal_Get(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -457,7 +457,7 @@ func TestMemory_Equal_Get(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Get(tt.args.params)
 			assert.Equal(t, *tt.args.params, *tt.expected)
