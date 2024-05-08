@@ -1,6 +1,7 @@
 package reporter
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,22 +14,43 @@ type Reporter struct {
 }
 
 type ReportParams struct {
+	Ctx context.Context
 	URL string
 }
 
-func (t *Reporter) Report(params *ReportParams) {
-	t.ctx.LogInformational(fmt.Sprintf("new report with params: %v", *params))
-	resp, err := http.Post(params.URL, "", nil)
+func (t *Reporter) report(params *ReportParams) (response string, err error) {
+	resp, err := http.Post(params.URL, "text/plain", nil)
 	if err != nil {
-		t.ctx.LogError(fmt.Sprintf("report response: %v", err))
+		err = fmt.Errorf("report response: %v", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		t.ctx.LogError(fmt.Sprintf("report response: %v", err))
+		err = fmt.Errorf("report response: %v", err)
 		return
 	}
-	t.ctx.LogInformational(fmt.Sprintf("report response: %v", string(bodyBytes)))
+
+	response = string(bodyBytes)
+	return
+}
+
+func Report(params *ReportParams) {
+	reporter := &Reporter{
+		ctx: logger.NewLogger(&logger.LoggerInitParams{
+			UniqueIDPrefix: "rpt",
+			Version:        "v-",
+			Severity:       7,
+		}),
+	}
+	defer reporter.ctx.Close()
+
+	reporter.ctx.LogInformational(fmt.Sprintf("new report with params: %v", *params))
+	response, err := reporter.report(params)
+	if err != nil {
+		reporter.ctx.LogError(fmt.Sprintf("report response: %v", err))
+		return
+	}
+	reporter.ctx.LogInformational(fmt.Sprintf("report response: %v", response))
 }

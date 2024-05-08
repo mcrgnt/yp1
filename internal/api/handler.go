@@ -21,13 +21,13 @@ type DefaultHandler struct {
 
 func (t *DefaultHandler) handleUpdate(r *http.Request, pathChunks []string) (statusHeader int, err error) {
 	if r.Method != http.MethodPost {
-		statusHeader = http.StatusNotFound
+		statusHeader = http.StatusBadRequest
 		err = fmt.Errorf("http method must be POST, actual: %s", r.Method)
 		return
 	}
 
 	if len(pathChunks) < pathUpdateChunksLen {
-		statusHeader = http.StatusNotFound
+		statusHeader = http.StatusBadRequest
 		err = fmt.Errorf("path have less data then required %d, actual: %d", pathUpdateChunksLen, len(pathChunks))
 		return
 	}

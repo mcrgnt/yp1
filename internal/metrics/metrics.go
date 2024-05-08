@@ -1,13 +1,14 @@
 package metrics
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
-	"net/http"
 	"reflect"
 	"runtime"
 	"sync/atomic"
 
+	"github.com/mcrgnt/yp1/internal/reporter"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
 
@@ -90,21 +91,23 @@ type ReportMetricsParams struct {
 	Address string
 }
 
-func ReportMetrics(params *ReportMetricsParams) (err error) {
-	var (
-		resp *http.Response
-	)
-	for _, name := range PollMetricsFromMemStatsList {
+func getFullMetricsNamesList() (metricsNamesList []string) {
+	metricsNamesList = append(metricsNamesList, PollMetricsFromMemStatsList...)
+	metricsNamesList = append(metricsNamesList, "PollCount")
+	metricsNamesList = append(metricsNamesList, "RandomValue")
+	return
+}
+
+func ReportMetrics(params *ReportMetricsParams) {
+	for _, name := range getFullMetricsNamesList() {
 		storageParams := &storage.StorageParams{
 			Name: name,
 		}
 		params.Storage.Get(storageParams)
-		resp, err = http.Post(fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value), "text/plain", nil)
-		if err != nil {
-			err = fmt.Errorf("post to server: %v", err)
-			return
-		}
-		_ = resp.Body.Close()
+		reporter.Report(&reporter.ReportParams{
+			Ctx: context.Background(),
+			URL: fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value),
+		})
 	}
-	return
+
 }

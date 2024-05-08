@@ -68,19 +68,22 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 // 	flag.Parse()
 // }
 
+func (t *Agent) report() {
+	t.ctx.LogInformational(fmt.Sprintf("address: %v", t.Address))
+	t.ctx.LogInformational(fmt.Sprintf("poll interval: %v", t.PollInterval))
+	t.ctx.LogInformational(fmt.Sprintf("report interval: %v", t.ReportInterval))
+}
+
 func (t *Agent) Run() (err error) {
+	t.report()
+	t.ctx.LogNotice("starting")
 	metrics.PollMetrics(&metrics.PollMetricsParams{
 		Storage: t.Storage,
 	})
-	go func() {
-		err := metrics.ReportMetrics(&metrics.ReportMetricsParams{
-			Storage: t.Storage,
-			Address: t.Address,
-		})
-		if err != nil {
-			t.ctx.LogError(err)
-		}
-	}()
+	go metrics.ReportMetrics(&metrics.ReportMetricsParams{
+		Storage: t.Storage,
+		Address: t.Address,
+	})
 
 	pollTicker := time.NewTicker(t.pollInterval)
 	reportTicker := time.NewTicker(t.reportInterval)
@@ -92,16 +95,13 @@ func (t *Agent) Run() (err error) {
 				Storage: t.Storage,
 			})
 		case <-reportTicker.C:
-			go func() {
-				err := metrics.ReportMetrics(&metrics.ReportMetricsParams{
-					Storage: t.Storage,
-					Address: t.Address,
-				})
-				if err != nil {
-					t.ctx.LogError(err)
-				}
-			}()
+			go metrics.ReportMetrics(&metrics.ReportMetricsParams{
+				Storage: t.Storage,
+				Address: t.Address,
+			})
+
 		case <-t.ctx.Done():
+			t.ctx.LogNotice("stopping")
 			return
 		}
 	}
