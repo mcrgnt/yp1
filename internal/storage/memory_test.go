@@ -2,7 +2,6 @@ package storage
 
 import (
 	"reflect"
-	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -469,7 +468,7 @@ func TestMemory_NotEqual_Get(t *testing.T) {
 	type fields struct {
 		Gauges   map[string]float64
 		Counters map[string]int64
-		mu       sync.Mutex
+		//		mu       sync.Mutex
 	}
 	type args struct {
 		params *StorageParams
@@ -594,7 +593,7 @@ func TestMemory_NotEqual_Get(t *testing.T) {
 			tr := &Memory{
 				Gauges:   tt.fields.Gauges,
 				Counters: tt.fields.Counters,
-				mu:       tt.fields.mu,
+				//				mu:       tt.fields.mu,
 			}
 			tr.Get(tt.args.params)
 			assert.NotEqual(t, *tt.args.params, *tt.expected)
