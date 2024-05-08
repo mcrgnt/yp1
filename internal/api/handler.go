@@ -27,7 +27,7 @@ func (t *DefaultHandler) handleUpdate(r *http.Request, pathChunks []string) (sta
 	}
 
 	if len(pathChunks) < pathUpdateChunksLen {
-		statusHeader = http.StatusBadRequest
+		statusHeader = http.StatusNotFound
 		err = fmt.Errorf("path have less data then required %d, actual: %d", pathUpdateChunksLen, len(pathChunks))
 		return
 	}
