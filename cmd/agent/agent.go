@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/caarlos0/env/v10"
 	"github.com/mcrgnt/yp1/internal/metrics"
 	"github.com/mcrgnt/yp1/internal/storage"
 	"github.com/microgiantya/logger"
@@ -37,10 +38,10 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{}),
 	}
 	agent.paramsParseFlag()
-	// err = agent.paramsParseEnv()
-	// if err != nil {
-	// 	return
-	// }
+	err = agent.paramsParseEnv()
+	if err != nil {
+		return
+	}
 	agent.pollInterval, err = time.ParseDuration(agent.PollInterval + "s")
 	if err != nil {
 		err = fmt.Errorf("parse pollInterval: %v", err)
@@ -55,9 +56,9 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 	return
 }
 
-// func (t *Agent) paramsParseEnv() error {
-// 	return env.Parse(t)
-// }
+func (t *Agent) paramsParseEnv() error {
+	return env.Parse(t)
+}
 
 func (t *Agent) paramsParseFlag() {
 	flag.StringVar(&t.Address, "a", "localhost:8080", "")

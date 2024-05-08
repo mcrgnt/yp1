@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/caarlos0/env/v10"
 	"github.com/mcrgnt/yp1/internal/api"
 	"github.com/mcrgnt/yp1/internal/storage"
 
@@ -34,10 +35,10 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 		wg: &sync.WaitGroup{},
 	}
 	server.paramsParseFlag()
-	// err = server.paramsParseEnv()
-	// if err != nil {
-	// 	return
-	// }
+	err = server.paramsParseEnv()
+	if err != nil {
+		return
+	}
 
 	server.api = api.NewAPI(&api.NewAPIParams{
 		Ctx:     ctx,
@@ -50,9 +51,9 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 	return
 }
 
-// func (t *Server) paramsParseEnv() error {
-// 	return env.Parse(t)
-// }
+func (t *Server) paramsParseEnv() error {
+	return env.Parse(t)
+}
 
 func (t *Server) paramsParseFlag() {
 	flag.StringVar(&t.Address, "a", "localhost:8080", "")
