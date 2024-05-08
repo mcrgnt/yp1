@@ -18,7 +18,7 @@ var (
 )
 
 type Server struct {
-	Address     string // `env:"ADDRESS"`
+	Address     string `env:"ADDRESS"`
 	StorageType string `env:"memory"`
 	ctx         *logger.Logger
 	api         *api.API

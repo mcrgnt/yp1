@@ -17,13 +17,12 @@ var (
 )
 
 type Agent struct {
-	Address     string // `env:"ADDRESS"`
-	StorageType string `env:"memory"`
-	ctx         *logger.Logger
-	//
-	PollInterval   string // `env:"POLL_INTERVAL"`
+	Address        string `env:"ADDRESS"`
+	StorageType    string `env:"memory"`
+	ctx            *logger.Logger
+	PollInterval   string `env:"POLL_INTERVAL"`
 	pollInterval   time.Duration
-	ReportInterval string // `env:"REPORT_INTERVAL"`
+	ReportInterval string `env:"REPORT_INTERVAL"`
 	reportInterval time.Duration
 	Storage        storage.MemStorage
 }
