@@ -12,9 +12,9 @@ func TestNewMemStorage(t *testing.T) {
 		params *NewMemStorageParams
 	}
 	tests := []struct {
-		name           string
-		args           args
 		wantMemStorage MemStorage
+		args           args
+		name           string
 	}{
 		{
 			name: "test0",

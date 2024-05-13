@@ -24,7 +24,6 @@ type DefaultHandler struct {
 
 type NewDefaultHandlerParams struct {
 	Storage storage.MemStorage
-	Ctx     context.Context
 }
 
 func (t *DefaultHandler) writeResponse(w http.ResponseWriter, r *http.Request, statusHeader int, err error) {
@@ -43,9 +42,9 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 	defer func() { t.writeResponse(w, r, statusHeader, err) }()
 
 	updateParams := &storage.StorageParams{
-		Type:  chi.URLParam(r, "type"),
-		Name:  chi.URLParam(r, "name"),
-		Value: chi.URLParam(r, "value"),
+		Type:        chi.URLParam(r, "type"),
+		Name:        chi.URLParam(r, "name"),
+		ValueString: chi.URLParam(r, "value"),
 	}
 
 	err = updateParams.ValidateType()
@@ -98,7 +97,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		statusHeader = http.StatusNotFound
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("%v", updateParams.Value)))
+	_, _ = fmt.Fprintf(w, "%v", updateParams.Value)
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
@@ -107,14 +106,15 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 		err          error
 	)
 	defer t.writeResponse(w, r, statusHeader, err)
-	w.Write([]byte(htmlHeader + t.storage.GetAll() + htmlFooter))
+	_, _ = w.Write([]byte(htmlHeader + t.storage.GetAll() + htmlFooter))
+	// _, _ = fmt.Fprint(w, string([]byte(htmlHeader+t.storage.GetAll()+htmlFooter)))
 }
 
-func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {
+func NewDefaultHandler(ctx context.Context, params *NewDefaultHandlerParams) (handler *DefaultHandler) {
 	handler = &DefaultHandler{
 		storage: params.Storage,
-		ctx: logger.NewLoggerContext(params.Ctx, &logger.LoggerInitParams{
-			Severity:       7,
+		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
+			Severity:       logSeverity,
 			UniqueIDPrefix: "hdl",
 			Version:        "v-",
 		}),

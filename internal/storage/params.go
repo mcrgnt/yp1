@@ -1,14 +1,18 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 )
 
 type StorageParams struct {
-	Type  string
-	Name  string
-	Value any
+	Value        any
+	ValueString  string
+	Type         string
+	Name         string
+	ValueFloat64 float64
+	ValueInt64   int64
 }
 
 func (t *StorageParams) ValidateType() (err error) {
@@ -22,20 +26,25 @@ func (t *StorageParams) ValidateType() (err error) {
 
 func (t *StorageParams) ValidateName() (err error) {
 	if t.Name == "" {
-		err = fmt.Errorf("validate name: empty metric name not allowed")
+		err = errors.New("validate name: empty metric name not allowed")
 	}
 	return
 }
 
 func (t *StorageParams) ValidateValue() (err error) {
 	switch t.Type {
-	case "gauge":
-		t.Value, err = strconv.ParseFloat(t.Value.(string), 64)
-	case "counter":
-		t.Value, err = strconv.ParseInt(t.Value.(string), 10, 64)
-	}
-	if err != nil {
-		err = fmt.Errorf("validate value: %v", err)
+	case gauge:
+		t.ValueFloat64, err = strconv.ParseFloat(t.ValueString, 64)
+		if err != nil {
+			err = fmt.Errorf("validate value: %w", err)
+		}
+		t.Value = t.ValueFloat64
+	case counter:
+		t.ValueInt64, err = strconv.ParseInt(t.ValueString, 10, 64)
+		if err != nil {
+			err = fmt.Errorf("validate value: %w", err)
+		}
+		t.Value = t.ValueInt64
 	}
 	return
 }

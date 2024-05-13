@@ -1,7 +1,6 @@
 package reporter
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,26 +8,31 @@ import (
 	"github.com/microgiantya/logger"
 )
 
+const (
+	logSeverity = 7
+)
+
 type Reporter struct {
 	ctx *logger.Logger
 }
 
 type ReportParams struct {
-	Ctx context.Context
 	URL string
 }
 
 func (t *Reporter) report(params *ReportParams) (response string, err error) {
 	resp, err := http.Post(params.URL, "text/plain", nil)
 	if err != nil {
-		err = fmt.Errorf("report response: %v", err)
+		err = fmt.Errorf("report response: %w", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = fmt.Errorf("report response: %v", err)
+		err = fmt.Errorf("report response: %w", err)
 		return
 	}
 
@@ -41,7 +45,7 @@ func Report(params *ReportParams) {
 		ctx: logger.NewLogger(&logger.LoggerInitParams{
 			UniqueIDPrefix: "rpt",
 			Version:        "v-",
-			Severity:       7,
+			Severity:       logSeverity,
 		}),
 	}
 	defer reporter.ctx.Close()

@@ -10,6 +10,10 @@ import (
 	"github.com/microgiantya/logger"
 )
 
+const (
+	logSeverity = 7
+)
+
 type API struct {
 	srv     *http.Server
 	ctx     *logger.Logger
@@ -17,27 +21,25 @@ type API struct {
 }
 
 type NewAPIParams struct {
-	Ctx     context.Context
-	Address string
 	Storage storage.MemStorage
+	Address string
 }
 
-func NewAPI(params *NewAPIParams) (api *API) {
+func NewAPI(ctx context.Context, params *NewAPIParams) (api *API) {
 	api = &API{
 		srv: &http.Server{
 			Addr: params.Address,
 		},
-		ctx: logger.NewLoggerContext(params.Ctx, &logger.LoggerInitParams{
-			Severity:       7,
+		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
+			Severity:       logSeverity,
 			UniqueIDPrefix: "api",
 			Version:        "v-",
 		}),
 		storage: params.Storage,
 	}
 
-	api.srv.Handler = NewDefaultHandler(&NewDefaultHandlerParams{
+	api.srv.Handler = NewDefaultHandler(ctx, &NewDefaultHandlerParams{
 		Storage: params.Storage,
-		Ctx:     params.Ctx,
 	}).R
 	return
 }
@@ -50,5 +52,5 @@ func (t *API) Close() {
 }
 
 func (t *API) Run() error {
-	return t.srv.ListenAndServe()
+	return fmt.Errorf("api run: %w", t.srv.ListenAndServe())
 }

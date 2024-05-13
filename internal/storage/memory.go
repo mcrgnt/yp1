@@ -5,6 +5,11 @@ import (
 	"sync"
 )
 
+const (
+	gauge   = "gauge"
+	counter = "counter"
+)
+
 type Memory struct {
 	Gauges   map[string]float64
 	Counters map[string]int64
@@ -22,11 +27,11 @@ func (t *Memory) Update(params *StorageParams) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	switch params.Type {
-	case "gauge":
-		t.Gauges[params.Name] = params.Value.(float64)
-	case "counter":
+	case gauge:
+		t.Gauges[params.Name] = params.ValueFloat64
+	case counter:
 		value := t.Counters[params.Name]
-		t.Counters[params.Name] = value + params.Value.(int64)
+		t.Counters[params.Name] = value + params.ValueInt64
 	}
 }
 
@@ -34,13 +39,13 @@ func (t *Memory) GetByName(params *StorageParams) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if v, ok := t.Gauges[params.Name]; ok {
-		params.Type = "gauge"
-		params.Value = v
+		params.Type = gauge
+		params.ValueFloat64 = v
 		return
 	}
 	if v, ok := t.Counters[params.Name]; ok {
-		params.Type = "counter"
-		params.Value = v
+		params.Type = counter
+		params.ValueInt64 = v
 		return
 	}
 }
@@ -49,14 +54,14 @@ func (t *Memory) GetByType(params *StorageParams) (err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	switch params.Type {
-	case "gauge":
+	case gauge:
 		if v, ok := t.Gauges[params.Name]; ok {
-			params.Value = v
+			params.ValueFloat64 = v
 			return
 		}
-	case "counter":
+	case counter:
 		if v, ok := t.Counters[params.Name]; ok {
-			params.Value = v
+			params.ValueInt64 = v
 			return
 		}
 	}

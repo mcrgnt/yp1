@@ -1,7 +1,6 @@
 package metrics
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"reflect"
@@ -63,7 +62,6 @@ func PollMetrics(params *PollMetricsParams) {
 			updateParams.Value = float64(val.FieldByName(name).Uint())
 		default:
 			updateParams.Value = val.FieldByName(name).Float()
-
 		}
 		params.Storage.Update(updateParams)
 	}
@@ -72,7 +70,7 @@ func PollMetrics(params *PollMetricsParams) {
 		updateParams := &storage.StorageParams{
 			Type:  "counter",
 			Name:  "PollCount",
-			Value: int64(PollMetricsInc.Load()),
+			Value: PollMetricsInc.Load(),
 		}
 		params.Storage.Update(updateParams)
 	}
@@ -93,8 +91,7 @@ type ReportMetricsParams struct {
 
 func getFullMetricsNamesList() (metricsNamesList []string) {
 	metricsNamesList = append(metricsNamesList, PollMetricsFromMemStatsList...)
-	metricsNamesList = append(metricsNamesList, "PollCount")
-	metricsNamesList = append(metricsNamesList, "RandomValue")
+	metricsNamesList = append(metricsNamesList, "PollCount", "RandomValue")
 	return
 }
 
@@ -105,9 +102,12 @@ func ReportMetrics(params *ReportMetricsParams) {
 		}
 		params.Storage.GetByName(storageParams)
 		reporter.Report(&reporter.ReportParams{
-			Ctx: context.Background(),
-			URL: fmt.Sprintf("http://%s/update/%s/%s/%v", params.Address, storageParams.Type, storageParams.Name, storageParams.Value),
+			URL: fmt.Sprintf("http://%s/update/%s/%s/%v",
+				params.Address,
+				storageParams.Type,
+				storageParams.Name,
+				storageParams.Value,
+			),
 		})
 	}
-
 }

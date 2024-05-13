@@ -6,13 +6,13 @@ import (
 
 func TestStorageParams_ValidateType(t *testing.T) {
 	type fields struct {
+		Value any
 		Type  string
 		Name  string
-		Value any
 	}
 	tests := []struct {
-		name    string
 		fields  fields
+		name    string
 		wantErr bool
 	}{
 		{
@@ -59,13 +59,13 @@ func TestStorageParams_ValidateType(t *testing.T) {
 
 func TestStorageParams_ValidateName(t *testing.T) {
 	type fields struct {
+		Value any
 		Type  string
 		Name  string
-		Value any
 	}
 	tests := []struct {
-		name    string
 		fields  fields
+		name    string
 		wantErr bool
 	}{
 		{
@@ -103,13 +103,13 @@ func TestStorageParams_ValidateName(t *testing.T) {
 
 func TestStorageParams_ValidateValue(t *testing.T) {
 	type fields struct {
+		Value any
 		Type  string
 		Name  string
-		Value any
 	}
 	tests := []struct {
-		name    string
 		fields  fields
+		name    string
 		wantErr bool
 	}{
 		{

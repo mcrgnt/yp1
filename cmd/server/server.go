@@ -6,11 +6,15 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/caarlos0/env/v10"
+	"github.com/caarlos0/env/v11"
 	"github.com/mcrgnt/yp1/internal/api"
 	"github.com/mcrgnt/yp1/internal/storage"
 
 	"github.com/microgiantya/logger"
+)
+
+const (
+	logSeverity = 7
 )
 
 var (
@@ -18,30 +22,29 @@ var (
 )
 
 type Server struct {
-	Address     string `env:"ADDRESS"`
-	StorageType string `env:"memory"`
 	ctx         *logger.Logger
 	api         *api.API
 	wg          *sync.WaitGroup
+	Address     string `env:"ADDRESS"`
+	StorageType string `env:"MEMORY"`
 }
 
 func NewServer(ctx context.Context) (server *Server, err error) {
 	server = &Server{
 		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
-			Severity:       7,
+			Severity:       logSeverity,
 			UniqueIDPrefix: "srv",
 			Version:        ServerVersion,
 		}),
 		wg: &sync.WaitGroup{},
 	}
-	server.paramsParseFlag()
-	err = server.paramsParseEnv()
+
+	err = server.paramsParse()
 	if err != nil {
 		return
 	}
 
-	server.api = api.NewAPI(&api.NewAPIParams{
-		Ctx:     ctx,
+	server.api = api.NewAPI(ctx, &api.NewAPIParams{
 		Address: server.Address,
 		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{
 			Type: server.StorageType,
@@ -52,7 +55,7 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 }
 
 func (t *Server) paramsParseEnv() error {
-	return env.Parse(t)
+	return fmt.Errorf("parse env: %w", env.Parse(t))
 }
 
 func (t *Server) paramsParseFlag() {
@@ -60,8 +63,13 @@ func (t *Server) paramsParseFlag() {
 	flag.Parse()
 }
 
+func (t *Server) paramsParse() error {
+	t.paramsParseFlag()
+	return t.paramsParseEnv()
+}
+
 func (t *Server) report() {
-	t.ctx.LogInformational(fmt.Sprintf("address: %s", t.Address))
+	t.ctx.LogInformational("address:" + t.Address)
 }
 
 func (t *Server) Run() {

@@ -9,8 +9,8 @@ import (
 
 func Test_Equal_NewMemory(t *testing.T) {
 	tests := []struct {
-		name string
 		want *Memory
+		name string
 	}{
 		{
 			name: "test0",
@@ -31,8 +31,8 @@ func Test_Equal_NewMemory(t *testing.T) {
 }
 func Test_NotEqual_NewMemory(t *testing.T) {
 	tests := []struct {
-		name string
 		want *Memory
+		name string
 	}{
 		{
 			name: "test0",
@@ -59,10 +59,10 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *Memory
+		name     string
 	}{
 		{
 			name: "test0",
@@ -142,10 +142,10 @@ func TestMemory_GaugesNotEqual_Update(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *Memory
+		name     string
 	}{
 		{
 			name: "test0",
@@ -207,10 +207,10 @@ func TestMemory_CountersEqual_Update(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *Memory
+		name     string
 	}{
 		{
 			name: "test0",
@@ -272,10 +272,10 @@ func TestMemory_CountersNotEqual_Update(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *Memory
+		name     string
 	}{
 		{
 			name: "test0",
@@ -337,10 +337,10 @@ func TestMemory_Equal_Get(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *StorageParams
+		name     string
 	}{
 		{
 			name: "test-1",
@@ -474,10 +474,10 @@ func TestMemory_NotEqual_Get(t *testing.T) {
 		params *StorageParams
 	}
 	tests := []struct {
-		name     string
 		fields   fields
 		args     args
 		expected *StorageParams
+		name     string
 	}{
 		{
 			name: "test-1",

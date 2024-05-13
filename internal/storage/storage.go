@@ -13,6 +13,8 @@ type NewMemStorageParams struct {
 
 func NewMemStorage(params *NewMemStorageParams) (memStorage MemStorage) {
 	switch params.Type {
+	case "memory":
+		memStorage = NewMemory()
 	default:
 		memStorage = NewMemory()
 	}
