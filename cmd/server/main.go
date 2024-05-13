@@ -10,9 +10,9 @@ import (
 
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	server, err := server.NewServer(ctx)
+	srv, err := server.NewServerContext(ctx)
 	if err != nil {
 		panic(err)
 	}
-	server.Run()
+	srv.Run()
 }

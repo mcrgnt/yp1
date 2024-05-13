@@ -76,28 +76,28 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	)
 	defer func() { t.writeResponse(w, r, statusHeader, err) }()
 
-	updateParams := &storage.StorageParams{
+	storageParams := &storage.StorageParams{
 		Type: chi.URLParam(r, "type"),
 		Name: chi.URLParam(r, "name"),
 	}
 
-	err = updateParams.ValidateType()
+	err = storageParams.ValidateType()
 	if err != nil {
 		statusHeader = http.StatusBadRequest
 		return
 	}
-	err = updateParams.ValidateName()
+	err = storageParams.ValidateName()
 	if err != nil {
 		statusHeader = http.StatusNotFound
 		return
 	}
 
-	err = t.storage.GetByType(updateParams)
+	value, err := t.storage.GetByType(storageParams)
 	if err != nil {
 		statusHeader = http.StatusNotFound
 		return
 	}
-	_, _ = fmt.Fprintf(w, "%v", updateParams.Value)
+	_, _ = fmt.Fprintf(w, "%s", value)
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {

@@ -10,9 +10,9 @@ import (
 
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	agent, err := agent.NewAgent(ctx)
+	agt, err := agent.NewAgentContext(ctx)
 	if err != nil {
 		panic(err)
 	}
-	agent.Run()
+	agt.Run()
 }

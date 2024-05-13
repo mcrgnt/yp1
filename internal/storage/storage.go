@@ -3,7 +3,7 @@ package storage
 type MemStorage interface {
 	Update(params *StorageParams)
 	GetByName(params *StorageParams)
-	GetByType(params *StorageParams) error
+	GetByType(params *StorageParams) (value string, err error)
 	GetAll() string
 }
 

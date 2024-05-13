@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 )
 
@@ -28,10 +29,10 @@ func (t *Memory) Update(params *StorageParams) {
 	defer t.mu.Unlock()
 	switch params.Type {
 	case gauge:
-		t.Gauges[params.Name] = params.Value.(float64)
+		t.Gauges[params.Name] = params.Value.(float64) //nolint:all // type is checked in validate function
 	case counter:
 		value := t.Counters[params.Name]
-		t.Counters[params.Name] = value + params.Value.(int64)
+		t.Counters[params.Name] = value + params.Value.(int64) //nolint:all // type is checked in validate function
 	}
 }
 
@@ -50,18 +51,20 @@ func (t *Memory) GetByName(params *StorageParams) {
 	}
 }
 
-func (t *Memory) GetByType(params *StorageParams) (err error) {
+func (t *Memory) GetByType(params *StorageParams) (value string, err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	switch params.Type {
 	case gauge:
 		if v, ok := t.Gauges[params.Name]; ok {
 			params.Value = v
+			value = strconv.FormatFloat(v, 'f', -1, 64)
 			return
 		}
 	case counter:
 		if v, ok := t.Counters[params.Name]; ok {
 			params.Value = v
+			value = strconv.FormatInt(v, 10)
 			return
 		}
 	}

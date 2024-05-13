@@ -2,12 +2,10 @@ package server
 
 import (
 	"context"
-	"flag"
-	"fmt"
 	"sync"
 
-	"github.com/caarlos0/env/v11"
 	"github.com/mcrgnt/yp1/internal/api"
+	"github.com/mcrgnt/yp1/internal/server/config"
 	"github.com/mcrgnt/yp1/internal/storage"
 
 	"github.com/microgiantya/logger"
@@ -22,14 +20,13 @@ var (
 )
 
 type Server struct {
-	ctx         *logger.Logger
-	api         *api.API
-	wg          *sync.WaitGroup
-	Address     string `env:"ADDRESS"`
-	StorageType string `env:"MEMORY"`
+	ctx     *logger.Logger
+	api     *api.API
+	wg      *sync.WaitGroup
+	address string
 }
 
-func NewServer(ctx context.Context) (server *Server, err error) {
+func NewServerContext(ctx context.Context) (server *Server, err error) {
 	server = &Server{
 		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
 			Severity:       logSeverity,
@@ -39,41 +36,24 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 		wg: &sync.WaitGroup{},
 	}
 
-	err = server.paramsParse()
+	cfg, err := config.NewConfig()
 	if err != nil {
 		return
 	}
 
+	server.address = cfg.Address
 	server.api = api.NewAPI(ctx, &api.NewAPIParams{
-		Address: server.Address,
+		Address: cfg.Address,
 		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{
-			Type: server.StorageType,
+			Type: cfg.StorageType,
 		}),
 	})
 
 	return
 }
 
-func (t *Server) paramsParseEnv() error {
-	err := env.Parse(t)
-	if err != nil {
-		return fmt.Errorf("parse env: %v", err)
-	}
-	return nil
-}
-
-func (t *Server) paramsParseFlag() {
-	flag.StringVar(&t.Address, "a", "localhost:8080", "")
-	flag.Parse()
-}
-
-func (t *Server) paramsParse() error {
-	t.paramsParseFlag()
-	return t.paramsParseEnv()
-}
-
 func (t *Server) report() {
-	t.ctx.LogInformational("address:" + t.Address)
+	t.ctx.LogInformational("address: " + t.address)
 }
 
 func (t *Server) Run() {

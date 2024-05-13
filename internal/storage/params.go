@@ -14,7 +14,7 @@ type StorageParams struct {
 
 func (t *StorageParams) ValidateType() (err error) {
 	switch t.Type {
-	case "gauge", "counter":
+	case gauge, counter:
 	default:
 		err = fmt.Errorf("validate type: unknown type: %s", t.Type)
 	}
