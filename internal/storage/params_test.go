@@ -103,9 +103,9 @@ func TestStorageParams_ValidateName(t *testing.T) {
 
 func TestStorageParams_ValidateValue(t *testing.T) {
 	type fields struct {
-		Value any
-		Type  string
-		Name  string
+		ValueString string
+		Type        string
+		Name        string
 	}
 	tests := []struct {
 		fields  fields
@@ -115,90 +115,90 @@ func TestStorageParams_ValidateValue(t *testing.T) {
 		{
 			name: "test0",
 			fields: fields{
-				Type:  "gauge",
-				Name:  "test0",
-				Value: "4",
+				Type:        "gauge",
+				Name:        "test0",
+				ValueString: "4",
 			},
 			wantErr: false,
 		},
 		{
 			name: "test1",
 			fields: fields{
-				Type:  "gauge",
-				Name:  "test1",
-				Value: "4.1",
+				Type:        "gauge",
+				Name:        "test1",
+				ValueString: "4.1",
 			},
 			wantErr: false,
 		},
 		{
 			name: "test1+",
 			fields: fields{
-				Type:  "gauge",
-				Name:  "test1+",
-				Value: "-4.1",
+				Type:        "gauge",
+				Name:        "test1+",
+				ValueString: "-4.1",
 			},
 			wantErr: false,
 		},
 		{
 			name: "test1++",
 			fields: fields{
-				Type:  "gauge",
-				Name:  "test1++",
-				Value: "1.7976931348623157e+309",
+				Type:        "gauge",
+				Name:        "test1++",
+				ValueString: "1.7976931348623157e+309",
 			},
 			wantErr: true,
 		},
 		{
 			name: "test2",
 			fields: fields{
-				Type:  "gauge",
-				Name:  "test2",
-				Value: "",
+				Type:        "gauge",
+				Name:        "test2",
+				ValueString: "",
 			},
 			wantErr: true,
 		},
 		{
 			name: "test3",
 			fields: fields{
-				Type:  "counter",
-				Name:  "test3",
-				Value: "4",
+				Type:        "counter",
+				Name:        "test3",
+				ValueString: "4",
 			},
 			wantErr: false,
 		},
 		{
 			name: "test3+",
 			fields: fields{
-				Type:  "counter",
-				Name:  "test3+",
-				Value: "-4",
+				Type:        "counter",
+				Name:        "test3+",
+				ValueString: "-4",
 			},
 			wantErr: false,
 		},
 		{
 			name: "test3++",
 			fields: fields{
-				Type:  "counter",
-				Name:  "test3++",
-				Value: "-402934802830498290384029384092830498203984209384092830984209384092830948209384028348972394857",
+				Type:        "counter",
+				Name:        "test3++",
+				ValueString: "-402934802830498290384029384092830498203984209384092830984209384092830948209384028348972394857",
 			},
 			wantErr: true,
 		},
 		{
 			name: "test4",
 			fields: fields{
-				Type:  "counter",
-				Name:  "test4",
-				Value: "4.4",
+				Type:        "counter",
+				Name:        "test4",
+				ValueString: "4.4",
 			},
 			wantErr: true,
 		},
 		{
 			name: "test5",
 			fields: fields{
-				Type:  "counter",
-				Name:  "test5",
-				Value: "",
+				Type:        "counter",
+				Name:        "test5",
+				ValueString: "",
 			},
 			wantErr: true,
 		},
@@ -206,9 +206,9 @@ func TestStorageParams_ValidateValue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tr := &StorageParams{
-				Type:  tt.fields.Type,
-				Name:  tt.fields.Name,
-				Value: tt.fields.Value,
+				Type:        tt.fields.Type,
+				Name:        tt.fields.Name,
+				ValueString: tt.fields.ValueString,
 			}
 			if err := tr.ValidateValue(); (err != nil) != tt.wantErr {
 				t.Errorf("StorageParams.ValidateValue() error = %v, wantErr %v", err, tt.wantErr)
