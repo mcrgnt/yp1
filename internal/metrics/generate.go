@@ -61,40 +61,5 @@ func main() {
 
 		}
 	}
-
 	tmpl.Execute(f, datas)
-
-	// for _, name := range metrics.PollMetricsFromMemStatsList {
-	// 	f.WriteString(name + "\n")
-	// }
-	// val := reflect.ValueOf(memStats).Elem()
-	// for _, name := range PollMetricsFromMemStatsList {
-	// 	updateParams := &storage.StorageParams{
-	// 		Type: "gauge",
-	// 		Name: name,
-	// 	}
-	// 	switch val.FieldByName(name).Interface().(type) {
-	// 	case uint32, uint64:
-	// 		updateParams.Value = cval.FieldByName(name).Uint())
-	// 	default:
-	// 		updateParams.Value = val.FieldByName(name).Float()
-	// 	}
-	// 	params.Storage.Update(updateParams)
-	// }
-	// {
-	// 	updateParams := &storage.StorageParams{
-	// 		Type:  "gauge",
-	// 		Name:  "RandomValue",
-	// 		Value: rand.Float64(),
-	// 	}
-	// 	params.Storage.Update(updateParams)
-	// }
-	// {
-	// 	updateParams := &storage.StorageParams{
-	// 		Type:  "counter",
-	// 		Name:  "PollCount",
-	// 		Value: int64(1),
-	// 	}
-	// 	params.Storage.Update(updateParams)
-	// }
 }

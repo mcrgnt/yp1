@@ -51,22 +51,16 @@ type PollMetricsParams struct {
 func PollMetrics(params *PollMetricsParams) {
 	runtime.ReadMemStats(MemStats)
 	genPollMetrics(params)
-	{
-		updateParams := &storage.StorageParams{
-			Type:  "gauge",
-			Name:  "RandomValue",
-			Value: rand.Float64(),
-		}
-		params.Storage.Update(updateParams)
-	}
-	{
-		updateParams := &storage.StorageParams{
-			Type:  "counter",
-			Name:  "PollCount",
-			Value: int64(1),
-		}
-		params.Storage.Update(updateParams)
-	}
+	params.Storage.Update(&storage.StorageParams{
+		Type:  "gauge",
+		Name:  "RandomValue",
+		Value: rand.Float64(),
+	})
+	params.Storage.Update(&storage.StorageParams{
+		Type:  "counter",
+		Name:  "PollCount",
+		Value: int64(1),
+	})
 }
 
 type ReportMetricsParams struct {
