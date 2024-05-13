@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 	"os/signal"
 
@@ -12,7 +13,7 @@ func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
 	agt, err := agent.NewAgentContext(ctx)
 	if err != nil {
-		panic(err)
+		log.Fatalf("new agent: %v", err)
 	}
 	agt.Run()
 }
