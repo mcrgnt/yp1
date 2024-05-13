@@ -3,16 +3,16 @@ package metrics
 import (
 	"fmt"
 	"math/rand"
-	"reflect"
 	"runtime"
-	"sync/atomic"
 
 	"github.com/mcrgnt/yp1/internal/reporter"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
 
+//go:generate go run generate.go
+
 var (
-	memStats                    = &runtime.MemStats{}
+	MemStats                    = &runtime.MemStats{}
 	PollMetricsFromMemStatsList = []string{
 		"Alloc",
 		"BuckHashSys",
@@ -42,7 +42,6 @@ var (
 		"Sys",
 		"TotalAlloc",
 	}
-	PollMetricsInc atomic.Int64
 )
 
 type PollMetricsParams struct {
@@ -50,36 +49,21 @@ type PollMetricsParams struct {
 }
 
 func PollMetrics(params *PollMetricsParams) {
-	fmt.Println("update:", PollMetricsInc.Load())
-	runtime.ReadMemStats(memStats)
-	val := reflect.ValueOf(memStats).Elem()
-	for _, name := range PollMetricsFromMemStatsList {
-		updateParams := &storage.StorageParams{
-			Type: "gauge",
-			Name: name,
-		}
-		switch val.FieldByName(name).Interface().(type) {
-		case uint32, uint64:
-			updateParams.Value = float64(val.FieldByName(name).Uint())
-		default:
-			updateParams.Value = val.FieldByName(name).Float()
-		}
-		params.Storage.Update(updateParams)
-	}
-	{
-		PollMetricsInc.Add(1)
-		updateParams := &storage.StorageParams{
-			Type:  "counter",
-			Name:  "PollCount",
-			Value: PollMetricsInc.Load(),
-		}
-		params.Storage.Update(updateParams)
-	}
+	runtime.ReadMemStats(MemStats)
+	genPollMetrics(params)
 	{
 		updateParams := &storage.StorageParams{
 			Type:  "gauge",
 			Name:  "RandomValue",
 			Value: rand.Float64(),
+		}
+		params.Storage.Update(updateParams)
+	}
+	{
+		updateParams := &storage.StorageParams{
+			Type:  "counter",
+			Name:  "PollCount",
+			Value: int64(1),
 		}
 		params.Storage.Update(updateParams)
 	}
@@ -111,5 +95,8 @@ func ReportMetrics(params *ReportMetricsParams) {
 			),
 		})
 	}
-	PollMetricsInc.Store(0)
+	params.Storage.Reset(&storage.StorageParams{
+		Type: "counter",
+		Name: "PollCount",
+	})
 }

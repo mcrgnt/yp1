@@ -29,10 +29,20 @@ func (t *Memory) Update(params *StorageParams) {
 	defer t.mu.Unlock()
 	switch params.Type {
 	case gauge:
-		t.Gauges[params.Name] = params.Value.(float64) //nolint:all // type is checked in validate function
+		t.Gauges[params.Name] = params.Value.(float64) //nolint:all // type is checked in validate or pre update function
 	case counter:
-		value := t.Counters[params.Name]
-		t.Counters[params.Name] = value + params.Value.(int64) //nolint:all // type is checked in validate function
+		t.Counters[params.Name] += params.Value.(int64) //nolint:all // type is checked in validate or pre update function
+	}
+}
+
+func (t *Memory) Reset(params *StorageParams) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	switch params.Type {
+	case gauge:
+		t.Gauges[params.Name] = 0
+	case counter:
+		t.Counters[params.Name] = 0
 	}
 }
 
