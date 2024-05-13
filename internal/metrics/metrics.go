@@ -59,26 +59,26 @@ func PollMetrics(params *PollMetricsParams) {
 		}
 		switch val.FieldByName(name).Interface().(type) {
 		case uint32, uint64:
-			updateParams.ValueFloat64 = float64(val.FieldByName(name).Uint())
+			updateParams.Value = float64(val.FieldByName(name).Uint())
 		default:
-			updateParams.ValueFloat64 = val.FieldByName(name).Float()
+			updateParams.Value = val.FieldByName(name).Float()
 		}
 		params.Storage.Update(updateParams)
 	}
 	{
 		PollMetricsInc.Add(1)
 		updateParams := &storage.StorageParams{
-			Type:       "counter",
-			Name:       "PollCount",
-			ValueInt64: PollMetricsInc.Load(),
+			Type:  "counter",
+			Name:  "PollCount",
+			Value: PollMetricsInc.Load(),
 		}
 		params.Storage.Update(updateParams)
 	}
 	{
 		updateParams := &storage.StorageParams{
-			Type:         "gauge",
-			Name:         "RandomValue",
-			ValueFloat64: rand.Float64(),
+			Type:  "gauge",
+			Name:  "RandomValue",
+			Value: rand.Float64(),
 		}
 		params.Storage.Update(updateParams)
 	}

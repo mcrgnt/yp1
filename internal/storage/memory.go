@@ -28,10 +28,10 @@ func (t *Memory) Update(params *StorageParams) {
 	defer t.mu.Unlock()
 	switch params.Type {
 	case gauge:
-		t.Gauges[params.Name] = params.ValueFloat64
+		t.Gauges[params.Name] = params.Value.(float64)
 	case counter:
 		value := t.Counters[params.Name]
-		t.Counters[params.Name] = value + params.ValueInt64
+		t.Counters[params.Name] = value + params.Value.(int64)
 	}
 }
 
@@ -40,14 +40,12 @@ func (t *Memory) GetByName(params *StorageParams) {
 	defer t.mu.Unlock()
 	if v, ok := t.Gauges[params.Name]; ok {
 		params.Type = gauge
-		params.ValueFloat64 = v
-		//params.Value = v
+		params.Value = v
 		return
 	}
 	if v, ok := t.Counters[params.Name]; ok {
 		params.Type = counter
-		params.ValueInt64 = v
-		//params.Value = v
+		params.Value = v
 		return
 	}
 }
@@ -58,12 +56,12 @@ func (t *Memory) GetByType(params *StorageParams) (err error) {
 	switch params.Type {
 	case gauge:
 		if v, ok := t.Gauges[params.Name]; ok {
-			params.ValueFloat64 = v
+			params.Value = v
 			return
 		}
 	case counter:
 		if v, ok := t.Counters[params.Name]; ok {
-			params.ValueInt64 = v
+			params.Value = v
 			return
 		}
 	}

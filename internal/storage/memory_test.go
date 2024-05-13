@@ -70,9 +70,9 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:         "gauge",
-					Name:         "test0",
-					ValueFloat64: 0,
+					Type:  "gauge",
+					Name:  "test0",
+					Value: float64(0),
 				},
 			},
 			expected: &Memory{
@@ -88,9 +88,9 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:         "gauge",
-					Name:         "test-1",
-					ValueFloat64: -1,
+					Type:  "gauge",
+					Name:  "test-1",
+					Value: float64(-1),
 				},
 			},
 			expected: &Memory{
@@ -106,9 +106,9 @@ func TestMemory_GaugesEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:         "gauge",
-					Name:         "test1",
-					ValueFloat64: 1,
+					Type:  "gauge",
+					Name:  "test1",
+					Value: float64(1),
 				},
 			},
 			expected: &Memory{
@@ -151,9 +151,9 @@ func TestMemory_GaugesNotEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:         "gauge",
-					Name:         "test0",
-					ValueFloat64: 6.1,
+					Type:  "gauge",
+					Name:  "test0",
+					Value: 6.1,
 				},
 			},
 			expected: &Memory{
@@ -169,9 +169,9 @@ func TestMemory_GaugesNotEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:         "gauge",
-					Name:         "test1",
-					ValueFloat64: 6.0,
+					Type:  "gauge",
+					Name:  "test1",
+					Value: 6.0,
 				},
 			},
 			expected: &Memory{
@@ -214,9 +214,9 @@ func TestMemory_CountersEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:       "counter",
-					Name:       "test0",
-					ValueInt64: 1,
+					Type:  "counter",
+					Name:  "test0",
+					Value: int64(1),
 				},
 			},
 			expected: &Memory{
@@ -232,9 +232,9 @@ func TestMemory_CountersEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:       "counter",
-					Name:       "test1",
-					ValueInt64: -6,
+					Type:  "counter",
+					Name:  "test1",
+					Value: int64(-6),
 				},
 			},
 			expected: &Memory{
@@ -277,9 +277,9 @@ func TestMemory_CountersNotEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:       "counter",
-					Name:       "test0",
-					ValueInt64: -1,
+					Type:  "counter",
+					Name:  "test0",
+					Value: int64(-1),
 				},
 			},
 			expected: &Memory{
@@ -295,9 +295,9 @@ func TestMemory_CountersNotEqual_Update(t *testing.T) {
 			},
 			args: args{
 				&StorageParams{
-					Type:       "counter",
-					Name:       "test1",
-					ValueInt64: 6,
+					Type:  "counter",
+					Name:  "test1",
+					Value: int64(6),
 				},
 			},
 			expected: &Memory{
@@ -346,9 +346,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:         "gauge",
-				Name:         "test-1",
-				ValueFloat64: -3.2,
+				Type:  "gauge",
+				Name:  "test-1",
+				Value: float64(-3.2),
 			},
 		},
 		{
@@ -364,9 +364,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:         "gauge",
-				Name:         "test0",
-				ValueFloat64: 0,
+				Type:  "gauge",
+				Name:  "test0",
+				Value: float64(0),
 			},
 		},
 		{
@@ -382,9 +382,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:         "gauge",
-				Name:         "test1",
-				ValueFloat64: 3.2,
+				Type:  "gauge",
+				Name:  "test1",
+				Value: float64(3.2),
 			},
 		},
 		{
@@ -400,9 +400,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:       "counter",
-				Name:       "test2",
-				ValueInt64: 3,
+				Type:  "counter",
+				Name:  "test2",
+				Value: int64(3),
 			},
 		},
 		{
@@ -418,9 +418,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:       "counter",
-				Name:       "test3",
-				ValueInt64: 0,
+				Type:  "counter",
+				Name:  "test3",
+				Value: int64(0),
 			},
 		},
 		{
@@ -436,9 +436,9 @@ func TestMemory_Equal_Get(t *testing.T) {
 				},
 			},
 			expected: &StorageParams{
-				Type:       "counter",
-				Name:       "test4",
-				ValueInt64: -1,
+				Type:  "counter",
+				Name:  "test4",
+				Value: int64(-1),
 			},
 		},
 	}

@@ -7,12 +7,9 @@ import (
 )
 
 type StorageParams struct {
-	Value        any
-	ValueString  string
-	Type         string
-	Name         string
-	ValueFloat64 float64
-	ValueInt64   int64
+	Value any
+	Type  string
+	Name  string
 }
 
 func (t *StorageParams) ValidateType() (err error) {
@@ -34,17 +31,15 @@ func (t *StorageParams) ValidateName() (err error) {
 func (t *StorageParams) ValidateValue() (err error) {
 	switch t.Type {
 	case gauge:
-		t.ValueFloat64, err = strconv.ParseFloat(t.ValueString, 64)
+		t.Value, err = strconv.ParseFloat(t.Value.(string), 64)
 		if err != nil {
 			err = fmt.Errorf("validate value: %w", err)
 		}
-		t.Value = t.ValueFloat64
 	case counter:
-		t.ValueInt64, err = strconv.ParseInt(t.ValueString, 10, 64)
+		t.Value, err = strconv.ParseInt(t.Value.(string), 10, 64)
 		if err != nil {
 			err = fmt.Errorf("validate value: %w", err)
 		}
-		t.Value = t.ValueInt64
 	}
 	return
 }

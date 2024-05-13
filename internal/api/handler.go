@@ -42,9 +42,9 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 	defer func() { t.writeResponse(w, r, statusHeader, err) }()
 
 	updateParams := &storage.StorageParams{
-		Type:        chi.URLParam(r, "type"),
-		Name:        chi.URLParam(r, "name"),
-		ValueString: chi.URLParam(r, "value"),
+		Type:  chi.URLParam(r, "type"),
+		Name:  chi.URLParam(r, "name"),
+		Value: chi.URLParam(r, "value"),
 	}
 
 	err = updateParams.ValidateType()
@@ -107,7 +107,6 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 	)
 	defer t.writeResponse(w, r, statusHeader, err)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetAll() + htmlFooter))
-	// _, _ = fmt.Fprint(w, string([]byte(htmlHeader+t.storage.GetAll()+htmlFooter)))
 }
 
 func NewDefaultHandler(ctx context.Context, params *NewDefaultHandlerParams) (handler *DefaultHandler) {
