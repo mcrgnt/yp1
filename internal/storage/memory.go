@@ -41,11 +41,13 @@ func (t *Memory) GetByName(params *StorageParams) {
 	if v, ok := t.Gauges[params.Name]; ok {
 		params.Type = gauge
 		params.ValueFloat64 = v
+		params.Value = v
 		return
 	}
 	if v, ok := t.Counters[params.Name]; ok {
 		params.Type = counter
 		params.ValueInt64 = v
+		params.Value = v
 		return
 	}
 }

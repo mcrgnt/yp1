@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -55,7 +55,11 @@ func NewServer(ctx context.Context) (server *Server, err error) {
 }
 
 func (t *Server) paramsParseEnv() error {
-	return fmt.Errorf("parse env: %w", env.Parse(t))
+	err := env.Parse(t)
+	if err != nil {
+		return fmt.Errorf("parse env: %v", err)
+	}
+	return nil
 }
 
 func (t *Server) paramsParseFlag() {

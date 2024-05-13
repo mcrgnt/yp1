@@ -1,4 +1,4 @@
-package main
+package agent
 
 import (
 	"context"
@@ -61,7 +61,11 @@ func NewAgent(ctx context.Context) (agent *Agent, err error) {
 }
 
 func (t *Agent) paramsParseEnv() error {
-	return fmt.Errorf("parse env: %w", env.Parse(t))
+	err := env.Parse(t)
+	if err != nil {
+		return fmt.Errorf("parse env: %w", err)
+	}
+	return nil
 }
 
 func (t *Agent) paramsParseFlag() {
