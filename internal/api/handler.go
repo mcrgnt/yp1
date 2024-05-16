@@ -24,8 +24,9 @@ type NewDefaultHandlerParams struct {
 	Storage storage.Storage
 }
 
-func (t *DefaultHandler) writeResponse(w http.ResponseWriter, _ *http.Request, statusHeader int, err error) {
+func (t *DefaultHandler) writeResponse(w http.ResponseWriter, statusHeader int, err error) {
 	if err != nil {
+		fmt.Println(">>>>>", err)
 		w.WriteHeader(statusHeader)
 	}
 }
@@ -36,7 +37,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		statusHeader = http.StatusOK
 	)
 	defer func() {
-		t.writeResponse(w, r, statusHeader, err)
+		t.writeResponse(w, statusHeader, err)
 	}()
 
 	updateParams := &storage.StorageParams{
@@ -50,10 +51,10 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, common.ErrEmptyMetricName):
 			statusHeader = http.StatusNotFound
-			fmt.Printf("update: %+v %v\n %d", *updateParams, err, statusHeader)
+			fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
 		default:
 			statusHeader = http.StatusBadRequest
-			fmt.Printf("update: %+v %v\n %d", *updateParams, err, statusHeader)
+			fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
 		}
 	}
 }
@@ -64,7 +65,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		err          error
 	)
 	defer func() {
-		t.writeResponse(w, r, statusHeader, err)
+		t.writeResponse(w, statusHeader, err)
 	}()
 
 	storageParams := &storage.StorageParams{
@@ -90,7 +91,7 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 		statusHeader = 200
 		err          error
 	)
-	defer t.writeResponse(w, r, statusHeader, err)
+	defer t.writeResponse(w, statusHeader, err)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
 }
 
