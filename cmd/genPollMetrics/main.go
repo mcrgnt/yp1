@@ -18,7 +18,7 @@ import (
 	"github.com/mcrgnt/yp1/internal/storage"
 )
 
-func genPollMetrics(params *PollMetricsParams) {
+func pollMetrics(params *PollMetricsParams) {
 	{{range .}}params.Storage.Update(&storage.StorageParams{
 		Type: "{{.Type}}",
 		Name: "{{.Name}}",

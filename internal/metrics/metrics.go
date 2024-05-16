@@ -9,7 +9,7 @@ import (
 	"github.com/mcrgnt/yp1/internal/storage"
 )
 
-//go:generate go run generate.go
+//go:generate go run ../../cmd/genPollMetrics/main.go
 
 var (
 	MemStats                    = &runtime.MemStats{}
@@ -50,7 +50,7 @@ type PollMetricsParams struct {
 
 func PollMetrics(params *PollMetricsParams) {
 	runtime.ReadMemStats(MemStats)
-	genPollMetrics(params)
+	pollMetrics(params)
 	params.Storage.Update(&storage.StorageParams{
 		Type:  "gauge",
 		Name:  "RandomValue",
