@@ -1,10 +1,12 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
 
@@ -14,12 +16,12 @@ var (
 )
 
 type DefaultHandler struct {
-	storage storage.MemStorage
+	storage storage.Storage
 	R       *chi.Mux
 }
 
 type NewDefaultHandlerParams struct {
-	Storage storage.MemStorage
+	Storage storage.Storage
 }
 
 func (t *DefaultHandler) writeResponse(w http.ResponseWriter, _ *http.Request, statusHeader int, err error) {
@@ -30,10 +32,12 @@ func (t *DefaultHandler) writeResponse(w http.ResponseWriter, _ *http.Request, s
 
 func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 	var (
-		statusHeader = 200
 		err          error
+		statusHeader = http.StatusOK
 	)
-	defer func() { t.writeResponse(w, r, statusHeader, err) }()
+	defer func() {
+		t.writeResponse(w, r, statusHeader, err)
+	}()
 
 	updateParams := &storage.StorageParams{
 		Type:  chi.URLParam(r, "type"),
@@ -41,26 +45,15 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		Value: chi.URLParam(r, "value"),
 	}
 
-	err = updateParams.ValidateType()
+	err = t.storage.MetricSet(updateParams)
 	if err != nil {
-		statusHeader = http.StatusBadRequest
-		return
+		switch {
+		case errors.Is(err, common.ErrEmptyMetricName):
+			statusHeader = http.StatusNotFound
+		default:
+			statusHeader = http.StatusBadRequest
+		}
 	}
-
-	err = updateParams.ValidateName()
-	if err != nil {
-		statusHeader = http.StatusNotFound
-		return
-	}
-
-	err = updateParams.ValidateValue()
-	if err != nil {
-		statusHeader = http.StatusBadRequest
-		return
-	}
-
-	statusHeader = http.StatusOK
-	t.storage.Update(updateParams)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
@@ -75,23 +68,16 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		Name: chi.URLParam(r, "name"),
 	}
 
-	err = storageParams.ValidateType()
+	err = t.storage.GetMetricStringByName(storageParams)
 	if err != nil {
-		statusHeader = http.StatusBadRequest
-		return
+		switch {
+		case errors.Is(err, common.ErrMetricNotFound):
+			statusHeader = http.StatusNotFound
+		default:
+			statusHeader = http.StatusBadRequest
+		}
 	}
-	err = storageParams.ValidateName()
-	if err != nil {
-		statusHeader = http.StatusNotFound
-		return
-	}
-
-	value, err := t.storage.GetByType(storageParams)
-	if err != nil {
-		statusHeader = http.StatusNotFound
-		return
-	}
-	_, _ = fmt.Fprintf(w, "%s", value)
+	_, _ = fmt.Fprint(w, storageParams.String)
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +86,7 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 		err          error
 	)
 	defer t.writeResponse(w, r, statusHeader, err)
-	_, _ = w.Write([]byte(htmlHeader + t.storage.GetAll() + htmlFooter))
+	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
 }
 
 func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {

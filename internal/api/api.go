@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -9,11 +10,11 @@ import (
 
 type API struct {
 	srv     *http.Server
-	storage storage.MemStorage
+	storage storage.Storage
 }
 
 type NewAPIParams struct {
-	Storage storage.MemStorage
+	Storage storage.Storage
 	Address string
 }
 
@@ -31,14 +32,14 @@ func NewAPI(params *NewAPIParams) (api *API) {
 	return
 }
 
-func (t *API) Close() {
-	_ = t.srv.Close()
+func (t *API) Shutdown(ctx context.Context) {
+	_ = t.srv.Shutdown(ctx)
 }
 
 func (t *API) Run() error {
 	err := t.srv.ListenAndServe()
 	if err != nil {
-		return fmt.Errorf("listen and server: %w", err)
+		return fmt.Errorf("listen and serve: %w", err)
 	}
 	return nil
 }

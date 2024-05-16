@@ -24,7 +24,7 @@ func NewServer() (server *Server, err error) {
 	server.address = cfg.Address
 	server.api = api.NewAPI(&api.NewAPIParams{
 		Address: cfg.Address,
-		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{
+		Storage: storage.NewStorage(&storage.NewMemStorageParams{
 			Type: cfg.StorageType,
 		}),
 	})
@@ -35,13 +35,15 @@ func NewServer() (server *Server, err error) {
 func (t *Server) Run(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
-		t.api.Close()
+		t.shutdown(ctx)
 	}()
-
 	err := t.api.Run()
 	if err != nil {
 		return fmt.Errorf("server run: %w", err)
 	}
-
 	return nil
+}
+
+func (t *Server) shutdown(ctx context.Context) {
+	t.api.Shutdown(ctx)
 }

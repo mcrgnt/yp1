@@ -1,23 +1,22 @@
 package storage
 
-type MemStorage interface {
-	Update(params *StorageParams)
-	Reset(params *StorageParams)
-	GetByName(params *StorageParams)
-	GetByType(params *StorageParams) (value string, err error)
-	GetAll() string
+type Storage interface {
+	MetricSet(*StorageParams) error
+	MetricReset(*StorageParams) error
+	GetMetricStringByName(*StorageParams) error
+	GetMetricAll() string
 }
 
 type NewMemStorageParams struct {
 	Type string
 }
 
-func NewMemStorage(params *NewMemStorageParams) (memStorage MemStorage) {
+func NewStorage(params *NewMemStorageParams) (storage Storage) {
 	switch params.Type {
 	case "memory":
-		memStorage = NewMemory()
+		storage = NewMemory()
 	default:
-		memStorage = NewMemory()
+		storage = NewMemory()
 	}
 	return
 }

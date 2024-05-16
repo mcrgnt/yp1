@@ -45,18 +45,18 @@ var (
 )
 
 type PollMetricsParams struct {
-	Storage storage.MemStorage
+	Storage storage.Storage
 }
 
 func PollMetrics(params *PollMetricsParams) {
 	runtime.ReadMemStats(MemStats)
 	pollMetrics(params)
-	params.Storage.Update(&storage.StorageParams{
+	_ = params.Storage.MetricSet(&storage.StorageParams{
 		Type:  "gauge",
 		Name:  "RandomValue",
 		Value: rand.Float64(),
 	})
-	params.Storage.Update(&storage.StorageParams{
+	_ = params.Storage.MetricSet(&storage.StorageParams{
 		Type:  "counter",
 		Name:  "PollCount",
 		Value: int64(1),
@@ -64,7 +64,7 @@ func PollMetrics(params *PollMetricsParams) {
 }
 
 type ReportMetricsParams struct {
-	Storage storage.MemStorage
+	Storage storage.Storage
 	Address string
 }
 
@@ -79,18 +79,17 @@ func ReportMetrics(params *ReportMetricsParams) {
 		storageParams := &storage.StorageParams{
 			Name: name,
 		}
-		params.Storage.GetByName(storageParams)
+		_ = params.Storage.GetMetricStringByName(storageParams)
 		reporter.Report(&reporter.ReportParams{
 			URL: fmt.Sprintf("http://%s/update/%s/%s/%v",
 				params.Address,
 				storageParams.Type,
 				storageParams.Name,
-				storageParams.Value,
+				storageParams.String,
 			),
 		})
 	}
-	params.Storage.Reset(&storage.StorageParams{
-		Type: "counter",
+	_ = params.Storage.MetricReset(&storage.StorageParams{
 		Name: "PollCount",
 	})
 }

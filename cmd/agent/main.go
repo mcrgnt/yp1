@@ -11,7 +11,7 @@ import (
 
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	agt, err := agent.NewAgentContext(ctx)
+	agt, err := agent.NewAgent()
 	if err != nil {
 		log.Fatalf("new agent: %v", err)
 	}

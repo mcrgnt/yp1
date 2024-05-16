@@ -2,17 +2,10 @@ package reporter
 
 import (
 	"testing"
-
-	"github.com/microgiantya/logger"
-)
-
-var (
-	loggerInitParams = &logger.LoggerInitParams{}
 )
 
 func TestReporter_report(t *testing.T) {
 	type fields struct {
-		ctx *logger.Logger
 	}
 	type args struct {
 		params *ReportParams
@@ -26,10 +19,8 @@ func TestReporter_report(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name: "test0",
-			fields: fields{
-				ctx: logger.NewLogger(loggerInitParams),
-			},
+			name:   "test0",
+			fields: fields{},
 			args: args{
 				params: &ReportParams{
 					URL: "http://localhost:8080/update/1/2/3",

@@ -3,141 +3,142 @@ package metrics
 
 import (
 	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/common"
 )
 
 func pollMetrics(params *PollMetricsParams) {
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "Alloc",
 		Value: float64(MemStats.Alloc),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "BuckHashSys",
 		Value: float64(MemStats.BuckHashSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "Frees",
 		Value: float64(MemStats.Frees),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "GCCPUFraction",
 		Value: MemStats.GCCPUFraction,
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "GCSys",
 		Value: float64(MemStats.GCSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapAlloc",
 		Value: float64(MemStats.HeapAlloc),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapIdle",
 		Value: float64(MemStats.HeapIdle),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapInuse",
 		Value: float64(MemStats.HeapInuse),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapObjects",
 		Value: float64(MemStats.HeapObjects),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapReleased",
 		Value: float64(MemStats.HeapReleased),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "HeapSys",
 		Value: float64(MemStats.HeapSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "LastGC",
 		Value: float64(MemStats.LastGC),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "Lookups",
 		Value: float64(MemStats.Lookups),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "MCacheInuse",
 		Value: float64(MemStats.MCacheInuse),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "MCacheSys",
 		Value: float64(MemStats.MCacheSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "MSpanInuse",
 		Value: float64(MemStats.MSpanInuse),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "MSpanSys",
 		Value: float64(MemStats.MSpanSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "Mallocs",
 		Value: float64(MemStats.Mallocs),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "NextGC",
 		Value: float64(MemStats.NextGC),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "NumForcedGC",
 		Value: float64(MemStats.NumForcedGC),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "NumGC",
 		Value: float64(MemStats.NumGC),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "OtherSys",
 		Value: float64(MemStats.OtherSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "PauseTotalNs",
 		Value: float64(MemStats.PauseTotalNs),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "StackInuse",
 		Value: float64(MemStats.StackInuse),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "StackSys",
 		Value: float64(MemStats.StackSys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "Sys",
 		Value: float64(MemStats.Sys),
 	})
-	params.Storage.Update(&storage.StorageParams{
-		Type: "gauge",
+	_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "TotalAlloc",
 		Value: float64(MemStats.TotalAlloc),
 	})

@@ -2,94 +2,78 @@ package storage
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
-)
 
-const (
-	gauge   = "gauge"
-	counter = "counter"
+	"github.com/mcrgnt/yp1/internal/storage/internal/metric"
 )
 
 type Memory struct {
-	Gauges   map[string]float64
-	Counters map[string]int64
-	mu       sync.Mutex
+	Metrics map[string]metric.Metric
+	mu      sync.Mutex
 }
 
 func NewMemory() *Memory {
 	return &Memory{
-		Gauges:   map[string]float64{},
-		Counters: map[string]int64{},
+		Metrics: map[string]metric.Metric{},
 	}
 }
 
-func (t *Memory) Update(params *StorageParams) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	switch params.Type {
-	case gauge:
-		t.Gauges[params.Name] = params.Value.(float64) //nolint:all // type is checked in validate or pre update function
-	case counter:
-		t.Counters[params.Name] += params.Value.(int64) //nolint:all // type is checked in validate or pre update function
+func (t *Memory) isMetricExists(params *StorageParams) bool {
+	if _, ok := t.Metrics[params.Name]; ok {
+		return true
 	}
+	return false
 }
 
-func (t *Memory) Reset(params *StorageParams) {
+func (t *Memory) MetricSet(params *StorageParams) (err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	switch params.Type {
-	case gauge:
-		t.Gauges[params.Name] = 0
-	case counter:
-		t.Counters[params.Name] = 0
-	}
-}
 
-func (t *Memory) GetByName(params *StorageParams) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	if v, ok := t.Gauges[params.Name]; ok {
-		params.Type = gauge
-		params.Value = v
-		return
-	}
-	if v, ok := t.Counters[params.Name]; ok {
-		params.Type = counter
-		params.Value = v
-		return
-	}
-}
-
-func (t *Memory) GetByType(params *StorageParams) (value string, err error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	switch params.Type {
-	case gauge:
-		if v, ok := t.Gauges[params.Name]; ok {
-			params.Value = v
-			value = strconv.FormatFloat(v, 'f', -1, 64)
+	if t.isMetricExists(params) {
+		err = t.Metrics[params.Name].Set(params.Value)
+	} else {
+		var newMetric metric.Metric
+		newMetric, err = metric.NewMetric(&metric.NewMetricParams{
+			Type:  params.Type,
+			Value: params.Value,
+		})
+		if err != nil {
+			fmt.Println(err)
 			return
 		}
-	case counter:
-		if v, ok := t.Counters[params.Name]; ok {
-			params.Value = v
-			value = strconv.FormatInt(v, 10)
-			return
-		}
+		t.Metrics[params.Name] = newMetric
 	}
-	err = fmt.Errorf("metric not found: %s", params.Name)
 	return
 }
 
-func (t *Memory) GetAll() (data string) {
+func (t *Memory) MetricReset(params *StorageParams) (err error) {
 	t.mu.Lock()
-	defer t.mu.Unlock()
-	for k, v := range t.Gauges {
-		data += fmt.Sprintf("%s: %v\r\n", k, v)
+	if t.isMetricExists(params) {
+		t.Metrics[params.Name].Reset()
+	} else {
+		err = fmt.Errorf("can't reset not existing metric: %s", params.Name)
 	}
-	for k, v := range t.Counters {
-		data += fmt.Sprintf("%s: %v\r\n", k, v)
+	t.mu.Unlock()
+	return
+}
+
+func (t *Memory) GetMetricStringByName(params *StorageParams) (err error) {
+	t.mu.Lock()
+	if v, ok := t.Metrics[params.Name]; ok {
+		params.String = v.String()
+		params.Type = v.Type()
+	} else {
+		err = fmt.Errorf("metric not found: %s", params.Name)
 	}
+	t.mu.Unlock()
+	return
+}
+
+func (t *Memory) GetMetricAll() (data string) {
+	t.mu.Lock()
+	for name, metric := range t.Metrics {
+		data += name + ": " + metric.String() + "\r\n"
+	}
+	t.mu.Unlock()
 	return
 }

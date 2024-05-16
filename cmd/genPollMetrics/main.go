@@ -16,11 +16,12 @@ package metrics
 
 import (
 	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/common"
 )
 
 func pollMetrics(params *PollMetricsParams) {
-	{{range .}}params.Storage.Update(&storage.StorageParams{
-		Type: "{{.Type}}",
+	{{range .}}_ = params.Storage.MetricSet(&storage.StorageParams{
+		Type: common.MetricTypeGauge,
 		Name: "{{.Name}}",
 		Value: {{.Value}},
 	})
@@ -30,7 +31,6 @@ func pollMetrics(params *PollMetricsParams) {
 )
 
 type data struct {
-	Type  string
 	Name  string
 	Value string
 }
@@ -48,13 +48,11 @@ func main() {
 		switch val.FieldByName(name).Interface().(type) {
 		case uint32, uint64:
 			datas = append(datas, data{
-				Type:  "gauge",
 				Name:  name,
 				Value: "float64(MemStats." + name + ")",
 			})
 		default:
 			datas = append(datas, data{
-				Type:  "gauge",
 				Name:  name,
 				Value: "MemStats." + name,
 			})
