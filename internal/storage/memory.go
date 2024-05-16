@@ -27,7 +27,9 @@ func (t *MemStorage) isMetricExists(params *StorageParams) bool {
 }
 
 func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
+	fmt.Println("0")
 	if params.Name == "" {
+		fmt.Println("1")
 		return fmt.Errorf("new metric: %w", common.ErrEmptyMetricName)
 	}
 
@@ -35,17 +37,21 @@ func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
 	defer t.mu.Unlock()
 
 	if t.isMetricExists(params) {
+		fmt.Println("2")
 		err = t.Metrics[params.Name].Set(params.Value)
 	} else {
+		fmt.Println("3")
 		var newMetric metric.Metric
 		newMetric, err = metric.NewMetric(&metric.NewMetricParams{
 			Type:  params.Type,
 			Value: params.Value,
 		})
 		if err != nil {
+			fmt.Println("4")
 			return
 		}
 		t.Metrics[params.Name] = newMetric
+		fmt.Println("5")
 	}
 	return
 }
