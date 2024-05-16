@@ -27,6 +27,7 @@ func (t *MemStorage) isMetricExists(params *StorageParams) bool {
 }
 
 func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
+	fmt.Println(t.GetMetricAll())
 	if params.Name == "" {
 		return fmt.Errorf("metric set: %w", common.ErrEmptyMetricName)
 	}
@@ -55,6 +56,7 @@ func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
 }
 
 func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
+	fmt.Println(t.GetMetricAll())
 	t.mu.Lock()
 	if t.isMetricExists(params) {
 		t.Metrics[params.Name].Reset()
@@ -66,6 +68,7 @@ func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 }
 
 func (t *MemStorage) GetMetricStringByName(params *StorageParams) (err error) {
+	fmt.Println(t.GetMetricAll())
 	t.mu.Lock()
 	if v, ok := t.Metrics[params.Name]; ok {
 		params.String = v.String()
