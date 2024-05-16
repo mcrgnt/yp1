@@ -24,13 +24,6 @@ type NewDefaultHandlerParams struct {
 	Storage storage.Storage
 }
 
-// func (t *DefaultHandler) writeResponse(w http.ResponseWriter, statusHeader int, err error) {
-// 	if err != nil {
-// 		fmt.Println(">>>>>", err)
-// 		w.WriteHeader(statusHeader)
-// 	}
-// }
-
 func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("inter update")
 	var (
