@@ -15,5 +15,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("new agent: %v", err)
 	}
-	agt.Run()
+	agt.Run(ctx)
 }

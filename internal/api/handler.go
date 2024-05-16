@@ -1,14 +1,11 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/mcrgnt/yp1/internal/storage"
-
-	"github.com/microgiantya/logger"
 )
 
 var (
@@ -18,7 +15,6 @@ var (
 
 type DefaultHandler struct {
 	storage storage.MemStorage
-	ctx     *logger.Logger
 	R       *chi.Mux
 }
 
@@ -26,10 +22,8 @@ type NewDefaultHandlerParams struct {
 	Storage storage.MemStorage
 }
 
-func (t *DefaultHandler) writeResponse(w http.ResponseWriter, r *http.Request, statusHeader int, err error) {
-	t.ctx.LogInformational(fmt.Sprintf("new request: method: %s, path: %s", r.Method, r.URL.Path))
+func (t *DefaultHandler) writeResponse(w http.ResponseWriter, _ *http.Request, statusHeader int, err error) {
 	if err != nil {
-		t.ctx.LogError(err)
 		w.WriteHeader(statusHeader)
 	}
 }
@@ -109,15 +103,10 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetAll() + htmlFooter))
 }
 
-func NewDefaultHandler(ctx context.Context, params *NewDefaultHandlerParams) (handler *DefaultHandler) {
+func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {
 	handler = &DefaultHandler{
 		storage: params.Storage,
-		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
-			Severity:       logSeverity,
-			UniqueIDPrefix: "hdl",
-			Version:        "v-",
-		}),
-		R: chi.NewRouter(),
+		R:       chi.NewRouter(),
 	}
 
 	handler.R.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)

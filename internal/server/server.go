@@ -2,47 +2,27 @@ package server
 
 import (
 	"context"
-	"sync"
+	"fmt"
 
 	"github.com/mcrgnt/yp1/internal/api"
 	"github.com/mcrgnt/yp1/internal/server/config"
 	"github.com/mcrgnt/yp1/internal/storage"
-
-	"github.com/microgiantya/logger"
-)
-
-const (
-	logSeverity = 7
-)
-
-var (
-	ServerVersion = "v-"
 )
 
 type Server struct {
-	ctx     *logger.Logger
 	api     *api.API
-	wg      *sync.WaitGroup
 	address string
 }
 
-func NewServerContext(ctx context.Context) (server *Server, err error) {
-	server = &Server{
-		ctx: logger.NewLoggerContext(ctx, &logger.LoggerInitParams{
-			Severity:       logSeverity,
-			UniqueIDPrefix: "srv",
-			Version:        ServerVersion,
-		}),
-		wg: &sync.WaitGroup{},
-	}
-
+func NewServer() (server *Server, err error) {
+	server = &Server{}
 	cfg, err := config.NewConfig()
 	if err != nil {
 		return
 	}
 
 	server.address = cfg.Address
-	server.api = api.NewAPI(ctx, &api.NewAPIParams{
+	server.api = api.NewAPI(&api.NewAPIParams{
 		Address: cfg.Address,
 		Storage: storage.NewMemStorage(&storage.NewMemStorageParams{
 			Type: cfg.StorageType,
@@ -52,21 +32,16 @@ func NewServerContext(ctx context.Context) (server *Server, err error) {
 	return
 }
 
-func (t *Server) report() {
-	t.ctx.LogInformational("address: " + t.address)
-}
-
-func (t *Server) Run() {
-	t.report()
-	t.ctx.LogNotice("starting")
-	t.wg.Add(1)
+func (t *Server) Run(ctx context.Context) error {
 	go func() {
-		t.wg.Done()
-		<-t.ctx.Done()
-		t.ctx.LogNotice("closing")
+		<-ctx.Done()
 		t.api.Close()
 	}()
 
-	t.wg.Wait()
-	_ = t.api.Run()
+	err := t.api.Run()
+	if err != nil {
+		return fmt.Errorf("server run: %w", err)
+	}
+
+	return nil
 }

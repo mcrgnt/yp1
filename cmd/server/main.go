@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 
@@ -11,9 +13,12 @@ import (
 
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	srv, err := server.NewServerContext(ctx)
+	srv, err := server.NewServer()
 	if err != nil {
 		log.Fatalf("new server: %v", err)
 	}
-	srv.Run()
+	err = srv.Run(ctx)
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatal(err)
+	}
 }
