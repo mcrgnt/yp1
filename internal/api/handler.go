@@ -47,6 +47,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 
 	err = t.storage.MetricSet(updateParams)
 	if err != nil {
+		fmt.Println("update:", *updateParams, err)
 		switch {
 		case errors.Is(err, common.ErrEmptyMetricName):
 			statusHeader = http.StatusNotFound
@@ -61,7 +62,9 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		statusHeader = 200
 		err          error
 	)
-	defer func() { t.writeResponse(w, r, statusHeader, err) }()
+	defer func() {
+		t.writeResponse(w, r, statusHeader, err)
+	}()
 
 	storageParams := &storage.StorageParams{
 		Type: chi.URLParam(r, "type"),
@@ -70,6 +73,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 
 	err = t.storage.GetMetricStringByName(storageParams)
 	if err != nil {
+		fmt.Println(err)
 		switch {
 		case errors.Is(err, common.ErrMetricNotFound):
 			statusHeader = http.StatusNotFound
