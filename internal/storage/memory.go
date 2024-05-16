@@ -20,6 +20,8 @@ func NewMemory() *MemStorage {
 }
 
 func (t *MemStorage) isMetricExists(params *StorageParams) bool {
+	fmt.Println("CHECK NAME:", params.Name)
+	fmt.Printf("%+v\n", t.Metrics)
 	if _, ok := t.Metrics[params.Name]; ok {
 		return true
 	}
