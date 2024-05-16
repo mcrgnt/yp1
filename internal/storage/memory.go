@@ -71,7 +71,7 @@ func (t *MemStorage) GetMetricStringByName(params *StorageParams) (err error) {
 		params.String = v.String()
 		params.Type = v.Type()
 	} else {
-		err = fmt.Errorf("metric not found: %s", params.Name)
+		err = fmt.Errorf("get metric string: %w %s", common.ErrMetricNotFound, params.Name)
 	}
 	t.mu.Unlock()
 	return

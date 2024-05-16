@@ -73,7 +73,6 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 
 	err = t.storage.GetMetricStringByName(storageParams)
 	if err != nil {
-		fmt.Println(err)
 		switch {
 		case errors.Is(err, common.ErrMetricNotFound):
 			statusHeader = http.StatusNotFound
