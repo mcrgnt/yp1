@@ -72,6 +72,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	defer fmt.Printf("----- value: %s %v %+v %v %d<<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
 
 	err = t.storage.GetMetricString(storageParams)
+	fmt.Println("VALUE: >>>>>>>>>>>>>>>>>>>>>>>>>>>.", err)
 	if err != nil {
 		switch {
 		case errors.Is(err, common.ErrMetricNotFound):
