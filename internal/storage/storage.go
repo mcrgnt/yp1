@@ -3,7 +3,7 @@ package storage
 type Storage interface {
 	MetricSet(*StorageParams) error
 	MetricReset(*StorageParams) error
-	GetMetricStringByName(*StorageParams) error
+	GetMetricString(*StorageParams) error
 	GetMetricAll() string
 }
 
