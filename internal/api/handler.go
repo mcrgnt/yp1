@@ -47,14 +47,13 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 
 	err = t.storage.MetricSet(updateParams)
 	if err != nil {
-		fmt.Println("update:", *updateParams, err)
 		switch {
 		case errors.Is(err, common.ErrEmptyMetricName):
 			statusHeader = http.StatusNotFound
-			fmt.Println("update:", *updateParams, err, statusHeader)
+			fmt.Printf("update: %+v %v\n %d", *updateParams, err, statusHeader)
 		default:
 			statusHeader = http.StatusBadRequest
-			fmt.Println("update:", *updateParams, err, statusHeader)
+			fmt.Printf("update: %+v %v\n %d", *updateParams, err, statusHeader)
 		}
 	}
 }
