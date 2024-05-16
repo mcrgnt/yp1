@@ -30,16 +30,18 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		statusHeader = http.StatusOK
 	)
 	defer func() {
-		w.WriteHeader(statusHeader)
+		if err != nil {
+			w.WriteHeader(statusHeader)
+		}
 	}()
 
-	updateParams := &storage.StorageParams{
+	storageParams := &storage.StorageParams{
 		Type:  chi.URLParam(r, "type"),
 		Name:  chi.URLParam(r, "name"),
 		Value: chi.URLParam(r, "value"),
 	}
 
-	err = t.storage.MetricSet(updateParams)
+	err = t.storage.MetricSet(storageParams)
 	if err != nil {
 		switch {
 		case errors.Is(err, common.ErrEmptyMetricName):
@@ -48,7 +50,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 			statusHeader = http.StatusBadRequest
 		}
 	}
-	fmt.Printf("update: %s %v %+v %v %d <<\n", r.Method, r.URL.Path, *updateParams, err, statusHeader)
+	fmt.Printf("----- update: %s %v %+v %v %d <<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
@@ -57,13 +59,17 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		err          error
 	)
 	defer func() {
-		w.WriteHeader(statusHeader)
+		if err != nil {
+			w.WriteHeader(statusHeader)
+		}
 	}()
 
 	storageParams := &storage.StorageParams{
 		Type: chi.URLParam(r, "type"),
 		Name: chi.URLParam(r, "name"),
 	}
+
+	defer fmt.Printf("----- value: %s %v %+v %v %d <<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
 
 	err = t.storage.GetMetricStringByName(storageParams)
 	if err != nil {
@@ -74,6 +80,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		default:
 			statusHeader = http.StatusBadRequest
 		}
+		return
 	}
 	_, _ = fmt.Fprint(w, storageParams.String)
 }
