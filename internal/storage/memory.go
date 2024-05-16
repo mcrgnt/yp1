@@ -20,14 +20,14 @@ func NewMemory() *MemStorage {
 }
 
 func (t *MemStorage) isMetricExists(params *StorageParams) bool {
-	if _, ok := t.Metrics[params.Name]; ok {
+	if _, ok := t.Metrics[params.Type+params.Name]; ok {
 		return true
 	}
 	return false
 }
 
 func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
-	fmt.Println(t.GetMetricAll())
+	fmt.Println(t.GetMetricAll()) // clean
 	if params.Name == "" {
 		return fmt.Errorf("metric set: %w", common.ErrEmptyMetricName)
 	}
@@ -40,7 +40,7 @@ func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
 	defer t.mu.Unlock()
 
 	if t.isMetricExists(params) {
-		err = t.Metrics[params.Name].Set(params.Value)
+		err = t.Metrics[params.Type+params.Name].Set(params.Value)
 	} else {
 		var newMetric metric.Metric
 		newMetric, err = metric.NewMetric(&metric.NewMetricParams{
@@ -50,16 +50,16 @@ func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
 		if err != nil {
 			return
 		}
-		t.Metrics[params.Name] = newMetric
+		t.Metrics[params.Type+params.Name] = newMetric
 	}
 	return
 }
 
 func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
-	fmt.Println(t.GetMetricAll())
+	fmt.Println(t.GetMetricAll()) // clean
 	t.mu.Lock()
 	if t.isMetricExists(params) {
-		t.Metrics[params.Name].Reset()
+		t.Metrics[params.Type+params.Name].Reset()
 	} else {
 		err = fmt.Errorf("can't reset not existing metric: %s", params.Name)
 	}
@@ -68,9 +68,9 @@ func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 }
 
 func (t *MemStorage) GetMetricStringByName(params *StorageParams) (err error) {
-	fmt.Println(t.GetMetricAll())
+	fmt.Println(t.GetMetricAll()) // clean
 	t.mu.Lock()
-	if v, ok := t.Metrics[params.Name]; ok {
+	if v, ok := t.Metrics[params.Type+params.Name]; ok {
 		params.String = v.String()
 		params.Type = v.Type()
 	} else {

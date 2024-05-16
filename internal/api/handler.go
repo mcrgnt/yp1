@@ -69,8 +69,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		Name: chi.URLParam(r, "name"),
 	}
 
-	var result string
-	defer fmt.Printf("----- value: %s %v %+v %v %d: %s<<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader, result)
+	defer fmt.Printf("----- value: %s %v %+v %v %d<<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
 
 	err = t.storage.GetMetricStringByName(storageParams)
 	if err != nil {
@@ -82,7 +81,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	result = storageParams.String //noliter:all // used in defer
+	fmt.Println(storageParams.String)
 	_, _ = fmt.Fprint(w, storageParams.String)
 }
 
