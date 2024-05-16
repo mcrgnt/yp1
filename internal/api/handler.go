@@ -60,6 +60,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	)
 	defer func() {
 		if err != nil {
+			fmt.Println("HEADER: >>>>>>>>>>>>>>>>>>>>>>>>>>>", statusHeader)
 			w.WriteHeader(statusHeader)
 		}
 	}()
