@@ -25,13 +25,12 @@ type NewDefaultHandlerParams struct {
 }
 
 func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("inter update")
 	var (
 		err          error
 		statusHeader = http.StatusOK
 	)
 	defer func() {
-		fmt.Println("write:", statusHeader)
+		fmt.Println("--------------", statusHeader, "--------------")
 		w.WriteHeader(statusHeader)
 	}()
 
@@ -46,12 +45,11 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, common.ErrEmptyMetricName):
 			statusHeader = http.StatusNotFound
-			fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
 		default:
 			statusHeader = http.StatusBadRequest
-			fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
 		}
 	}
+	fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
