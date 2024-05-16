@@ -73,9 +73,11 @@ func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 func (t *MemStorage) GetMetricString(params *StorageParams) (err error) {
 	t.mu.Lock()
 	if v, ok := t.isMetricExistsValue(params); ok {
+		fmt.Println("FOUND:", *params, t.GetMetricAll())
 		params.String = v.String()
 		params.Type = v.Type()
 	} else {
+		fmt.Println("NOT FOUND:", *params, t.GetMetricAll())
 		err = fmt.Errorf("get metric string: %w %s", common.ErrMetricNotFound, params.Name)
 	}
 	t.mu.Unlock()
