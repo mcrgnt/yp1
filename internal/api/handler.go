@@ -24,20 +24,22 @@ type NewDefaultHandlerParams struct {
 	Storage storage.Storage
 }
 
-func (t *DefaultHandler) writeResponse(w http.ResponseWriter, statusHeader int, err error) {
-	if err != nil {
-		fmt.Println(">>>>>", err)
-		w.WriteHeader(statusHeader)
-	}
-}
+// func (t *DefaultHandler) writeResponse(w http.ResponseWriter, statusHeader int, err error) {
+// 	if err != nil {
+// 		fmt.Println(">>>>>", err)
+// 		w.WriteHeader(statusHeader)
+// 	}
+// }
 
 func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("inter update")
 	var (
 		err          error
 		statusHeader = http.StatusOK
 	)
 	defer func() {
-		t.writeResponse(w, statusHeader, err)
+		fmt.Println("write:", statusHeader)
+		w.WriteHeader(statusHeader)
 	}()
 
 	updateParams := &storage.StorageParams{
@@ -61,11 +63,11 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	var (
-		statusHeader = 200
+		statusHeader = http.StatusOK
 		err          error
 	)
 	defer func() {
-		t.writeResponse(w, statusHeader, err)
+		w.WriteHeader(statusHeader)
 	}()
 
 	storageParams := &storage.StorageParams{
@@ -87,11 +89,6 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
-	var (
-		statusHeader = 200
-		err          error
-	)
-	defer t.writeResponse(w, statusHeader, err)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
 }
 
@@ -102,6 +99,7 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 	}
 
 	handler.R.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
+	handler.R.Post("/update/{type}/", handler.handlerUpdate)
 	handler.R.Get("/value/{type}/{name}", handler.handlerValue)
 	handler.R.Get("/", handler.handlerRoot)
 
