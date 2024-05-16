@@ -58,5 +58,5 @@ func (t *Gauge) Type() string {
 }
 
 func (t *Gauge) String() string {
-	return strconv.FormatFloat(t.Value, 'f', 6, 64)
+	return strconv.FormatFloat(t.Value, 'f', -1, 64)
 }
