@@ -19,7 +19,6 @@ type NewMetricParams struct {
 }
 
 func NewMetric(params *NewMetricParams) (Metric, error) {
-	fmt.Println("new metric: ", *params)
 	switch params.Type {
 	case common.MetricTypeGauge:
 		return NewGauge(&NewGaugeParams{
@@ -30,5 +29,5 @@ func NewMetric(params *NewMetricParams) (Metric, error) {
 			Value: params.Value,
 		})
 	}
-	return nil, fmt.Errorf("new metric: %w: <%s>", common.ErrNotImplementedMetricType, params.Type)
+	return nil, fmt.Errorf("new metric: %w <%s>", common.ErrNotImplementedMetricType, params.Type)
 }

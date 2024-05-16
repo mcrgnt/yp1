@@ -4,28 +4,33 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/storage/internal/metric"
 )
 
-type Memory struct {
+type MemStorage struct {
 	Metrics map[string]metric.Metric
 	mu      sync.Mutex
 }
 
-func NewMemory() *Memory {
-	return &Memory{
+func NewMemory() *MemStorage {
+	return &MemStorage{
 		Metrics: map[string]metric.Metric{},
 	}
 }
 
-func (t *Memory) isMetricExists(params *StorageParams) bool {
+func (t *MemStorage) isMetricExists(params *StorageParams) bool {
 	if _, ok := t.Metrics[params.Name]; ok {
 		return true
 	}
 	return false
 }
 
-func (t *Memory) MetricSet(params *StorageParams) (err error) {
+func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
+	if params.Name == "" {
+		return fmt.Errorf("new metric: %w", common.ErrEmptyMetricName)
+	}
+
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -38,7 +43,6 @@ func (t *Memory) MetricSet(params *StorageParams) (err error) {
 			Value: params.Value,
 		})
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
 		t.Metrics[params.Name] = newMetric
@@ -46,7 +50,7 @@ func (t *Memory) MetricSet(params *StorageParams) (err error) {
 	return
 }
 
-func (t *Memory) MetricReset(params *StorageParams) (err error) {
+func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 	t.mu.Lock()
 	if t.isMetricExists(params) {
 		t.Metrics[params.Name].Reset()
@@ -57,7 +61,7 @@ func (t *Memory) MetricReset(params *StorageParams) (err error) {
 	return
 }
 
-func (t *Memory) GetMetricStringByName(params *StorageParams) (err error) {
+func (t *MemStorage) GetMetricStringByName(params *StorageParams) (err error) {
 	t.mu.Lock()
 	if v, ok := t.Metrics[params.Name]; ok {
 		params.String = v.String()
@@ -69,7 +73,7 @@ func (t *Memory) GetMetricStringByName(params *StorageParams) (err error) {
 	return
 }
 
-func (t *Memory) GetMetricAll() (data string) {
+func (t *MemStorage) GetMetricAll() (data string) {
 	t.mu.Lock()
 	for name, metric := range t.Metrics {
 		data += name + ": " + metric.String() + "\r\n"
