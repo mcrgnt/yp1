@@ -49,7 +49,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 			statusHeader = http.StatusBadRequest
 		}
 	}
-	fmt.Printf("update: %+v %v %d <<\n", *updateParams, err, statusHeader)
+	fmt.Printf("update: %s %v %+v %v %d <<\n", r.Method, r.URL.Path, *updateParams, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
