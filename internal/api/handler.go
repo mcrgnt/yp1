@@ -30,7 +30,6 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		statusHeader = http.StatusOK
 	)
 	defer func() {
-		fmt.Println("--------------", statusHeader, "--------------")
 		w.WriteHeader(statusHeader)
 	}()
 
