@@ -34,8 +34,19 @@ func fromAnyToInt64(value any) (int64, error) {
 	}
 }
 
+func fromAnyToInt64WithCheckForNegative(value any) (v int64, err error) {
+	v, err = fromAnyToInt64(value)
+	if err != nil {
+		return
+	}
+	if v < 0 {
+		err = fmt.Errorf("convert to int64: %w %T", common.ErrIncompatibleMetricValue, value)
+	}
+	return
+}
+
 func NewCounter(params *NewCounterParams) (counter *Counter, err error) {
-	value, err := fromAnyToInt64(params.Value)
+	value, err := fromAnyToInt64WithCheckForNegative(params.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +56,7 @@ func NewCounter(params *NewCounterParams) (counter *Counter, err error) {
 }
 
 func (t *Counter) Set(value any) (err error) {
-	newValue, err := fromAnyToInt64(value)
+	newValue, err := fromAnyToInt64WithCheckForNegative(value)
 	if err != nil {
 		return
 	}
@@ -58,7 +69,7 @@ func (t *Counter) Reset() {
 }
 
 func (t *Counter) Type() string {
-	return common.MetricTypeCounter
+	return common.TypeMetricCounter
 }
 
 func (t *Counter) String() string {

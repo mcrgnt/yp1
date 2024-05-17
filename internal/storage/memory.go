@@ -36,12 +36,14 @@ func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
 		return fmt.Errorf("metric set: %w", common.ErrEmptyMetricName)
 	}
 
-	if params.Type != common.MetricTypeCounter && params.Type != common.MetricTypeGauge {
+	if params.Type != common.TypeMetricCounter && params.Type != common.TypeMetricGauge {
 		return fmt.Errorf("metric set: %w <%s>", common.ErrNotImplementedMetricType, params.Type)
 	}
 
 	t.mu.Lock()
-	defer t.mu.Unlock()
+	defer func() {
+		t.mu.Unlock()
+	}()
 
 	if t.isMetricExists(params) {
 		err = t.Metrics[params.Type+params.Name].Set(params.Value)

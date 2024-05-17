@@ -11,7 +11,7 @@ import (
 func pollMetrics(params *PollMetricsParams) {
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "Alloc",
 			Value: float64(MemStats.Alloc),
 		})
@@ -21,7 +21,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "BuckHashSys",
 			Value: float64(MemStats.BuckHashSys),
 		})
@@ -31,7 +31,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "Frees",
 			Value: float64(MemStats.Frees),
 		})
@@ -41,7 +41,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "GCCPUFraction",
 			Value: MemStats.GCCPUFraction,
 		})
@@ -51,7 +51,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "GCSys",
 			Value: float64(MemStats.GCSys),
 		})
@@ -61,7 +61,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapAlloc",
 			Value: float64(MemStats.HeapAlloc),
 		})
@@ -71,7 +71,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapIdle",
 			Value: float64(MemStats.HeapIdle),
 		})
@@ -81,7 +81,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapInuse",
 			Value: float64(MemStats.HeapInuse),
 		})
@@ -91,7 +91,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapObjects",
 			Value: float64(MemStats.HeapObjects),
 		})
@@ -101,7 +101,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapReleased",
 			Value: float64(MemStats.HeapReleased),
 		})
@@ -111,7 +111,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "HeapSys",
 			Value: float64(MemStats.HeapSys),
 		})
@@ -121,7 +121,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "LastGC",
 			Value: float64(MemStats.LastGC),
 		})
@@ -131,7 +131,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "Lookups",
 			Value: float64(MemStats.Lookups),
 		})
@@ -141,7 +141,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "MCacheInuse",
 			Value: float64(MemStats.MCacheInuse),
 		})
@@ -151,7 +151,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "MCacheSys",
 			Value: float64(MemStats.MCacheSys),
 		})
@@ -161,7 +161,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "MSpanInuse",
 			Value: float64(MemStats.MSpanInuse),
 		})
@@ -171,7 +171,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "MSpanSys",
 			Value: float64(MemStats.MSpanSys),
 		})
@@ -181,7 +181,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "Mallocs",
 			Value: float64(MemStats.Mallocs),
 		})
@@ -191,7 +191,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "NextGC",
 			Value: float64(MemStats.NextGC),
 		})
@@ -201,7 +201,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "NumForcedGC",
 			Value: float64(MemStats.NumForcedGC),
 		})
@@ -211,7 +211,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "NumGC",
 			Value: float64(MemStats.NumGC),
 		})
@@ -221,7 +221,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "OtherSys",
 			Value: float64(MemStats.OtherSys),
 		})
@@ -231,7 +231,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "PauseTotalNs",
 			Value: float64(MemStats.PauseTotalNs),
 		})
@@ -241,7 +241,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "StackInuse",
 			Value: float64(MemStats.StackInuse),
 		})
@@ -251,7 +251,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "StackSys",
 			Value: float64(MemStats.StackSys),
 		})
@@ -261,7 +261,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "Sys",
 			Value: float64(MemStats.Sys),
 		})
@@ -271,7 +271,7 @@ func pollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+			Type: common.TypeMetricGauge,
 			Name: "TotalAlloc",
 			Value: float64(MemStats.TotalAlloc),
 		})

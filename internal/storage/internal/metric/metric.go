@@ -20,11 +20,11 @@ type NewMetricParams struct {
 
 func NewMetric(params *NewMetricParams) (Metric, error) {
 	switch params.Type {
-	case common.MetricTypeGauge:
+	case common.TypeMetricGauge:
 		return NewGauge(&NewGaugeParams{
 			Value: params.Value,
 		})
-	case common.MetricTypeCounter:
+	case common.TypeMetricCounter:
 		return NewCounter(&NewCounterParams{
 			Value: params.Value,
 		})

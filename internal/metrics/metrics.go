@@ -54,7 +54,7 @@ func PollMetrics(params *PollMetricsParams) {
 	pollMetrics(params)
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type:  common.MetricTypeGauge,
+			Type:  common.TypeMetricGauge,
 			Name:  "RandomValue",
 			Value: rand.Float64(),
 		})
@@ -64,7 +64,7 @@ func PollMetrics(params *PollMetricsParams) {
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type:  common.MetricTypeCounter,
+			Type:  common.TypeMetricCounter,
 			Name:  "PollCount",
 			Value: int64(1),
 		})
@@ -106,7 +106,7 @@ func ReportMetrics(params *ReportMetricsParams) {
 	}
 
 	err = params.Storage.MetricReset(&storage.StorageParams{
-		Type: common.MetricTypeCounter,
+		Type: common.TypeMetricCounter,
 		Name: "PollCount",
 	})
 	if err != nil {
@@ -130,6 +130,6 @@ func getFullMetricsCounterNamesList() (metricsNamesList []string) {
 }
 
 func init() {
-	metricsTypeNames[common.MetricTypeGauge] = getFullMetricsGaugeNamesList()
-	metricsTypeNames[common.MetricTypeCounter] = getFullMetricsCounterNamesList()
+	metricsTypeNames[common.TypeMetricGauge] = getFullMetricsGaugeNamesList()
+	metricsTypeNames[common.TypeMetricCounter] = getFullMetricsCounterNamesList()
 }
