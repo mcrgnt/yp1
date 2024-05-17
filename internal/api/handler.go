@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
@@ -15,10 +14,6 @@ var (
 	htmlHeader = `<!DOCTYPE html><html><head><title>Metrics</title></head><body>`
 	htmlFooter = `</body></html>`
 )
-
-func getUUID() string {
-	return uuid.New().String()
-}
 
 type DefaultHandler struct {
 	storage storage.Storage
@@ -46,8 +41,6 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		Name:  chi.URLParam(r, "name"),
 		Value: chi.URLParam(r, "value"),
 	}
-	_uuid := getUUID()
-	fmt.Printf("%s update: %s %v %+v <<\n", _uuid, r.Method, r.URL.Path, *storageParams)
 
 	err = t.storage.MetricSet(storageParams)
 	if err != nil {
@@ -58,7 +51,6 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 			statusHeader = http.StatusBadRequest
 		}
 	}
-	fmt.Printf("%s update: %v %d <<\n", _uuid, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
@@ -77,13 +69,6 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		Type: chi.URLParam(r, "type"),
 		Name: chi.URLParam(r, "name"),
 	}
-
-	_uuid := getUUID()
-	fmt.Printf("%s value: %s %v %+v <<\n", _uuid, r.Method, r.URL.Path, *storageParams)
-
-	defer func() {
-		fmt.Printf("%s value: %s %v %d <<\n", _uuid, storageParams.String, err, statusHeader)
-	}()
 
 	err = t.storage.GetMetricString(storageParams)
 	if err != nil {

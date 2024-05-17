@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"runtime"
 
+	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/reporter"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
@@ -42,6 +43,7 @@ var (
 		"Sys",
 		"TotalAlloc",
 	}
+	metricsTypeNames = map[string][]string{}
 )
 
 type PollMetricsParams struct {
@@ -68,28 +70,50 @@ type ReportMetricsParams struct {
 	Address string
 }
 
-func getFullMetricsNamesList() (metricsNamesList []string) {
+func getFullMetricsGaugeNamesList() (metricsNamesList []string) {
 	metricsNamesList = append(metricsNamesList, PollMetricsFromMemStatsList...)
-	metricsNamesList = append(metricsNamesList, "PollCount", "RandomValue")
+	metricsNamesList = append(metricsNamesList, "RandomValue")
+	return
+}
+
+func getFullMetricsCounterNamesList() (metricsNamesList []string) {
+	metricsNamesList = append(metricsNamesList, "PollCount")
 	return
 }
 
 func ReportMetrics(params *ReportMetricsParams) {
-	for _, name := range getFullMetricsNamesList() {
-		storageParams := &storage.StorageParams{
-			Name: name,
+	var err error
+	for _type, names := range metricsTypeNames {
+		for _, name := range names {
+			storageParams := &storage.StorageParams{
+				Type: _type,
+				Name: name,
+			}
+			err = params.Storage.GetMetricString(storageParams)
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = reporter.Report(&reporter.ReportParams{
+				URL: fmt.Sprintf("http://%s/update/%s/%s/%v",
+					params.Address,
+					storageParams.Type,
+					storageParams.Name,
+					storageParams.String,
+				),
+			})
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
-		_ = params.Storage.GetMetricString(storageParams)
-		reporter.Report(&reporter.ReportParams{
-			URL: fmt.Sprintf("http://%s/update/%s/%s/%v",
-				params.Address,
-				storageParams.Type,
-				storageParams.Name,
-				storageParams.String,
-			),
-		})
 	}
+
 	_ = params.Storage.MetricReset(&storage.StorageParams{
+		Type: common.MetricTypeCounter,
 		Name: "PollCount",
 	})
+}
+
+func init() {
+	metricsTypeNames[common.MetricTypeGauge] = getFullMetricsGaugeNamesList()
+	metricsTypeNames[common.MetricTypeCounter] = getFullMetricsCounterNamesList()
 }

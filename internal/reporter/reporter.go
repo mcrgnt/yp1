@@ -32,7 +32,8 @@ func (t *Reporter) report(params *ReportParams) (response string, err error) {
 	return
 }
 
-func Report(params *ReportParams) {
+func Report(params *ReportParams) (err error) {
 	reporter := &Reporter{}
-	_, _ = reporter.report(params)
+	_, err = reporter.report(params)
+	return
 }
