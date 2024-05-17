@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/storage"
 )
@@ -14,6 +15,10 @@ var (
 	htmlHeader = `<!DOCTYPE html><html><head><title>Metrics</title></head><body>`
 	htmlFooter = `</body></html>`
 )
+
+func getUUID() string {
+	return uuid.New().String()
+}
 
 type DefaultHandler struct {
 	storage storage.Storage
@@ -29,6 +34,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		err          error
 		statusHeader = http.StatusOK
 	)
+
 	defer func() {
 		if err != nil {
 			w.WriteHeader(statusHeader)
@@ -40,6 +46,8 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		Name:  chi.URLParam(r, "name"),
 		Value: chi.URLParam(r, "value"),
 	}
+	uuid := getUUID()
+	fmt.Printf("%s update: %s %v %+v <<\n", uuid, r.Method, r.URL.Path, *storageParams)
 
 	err = t.storage.MetricSet(storageParams)
 	if err != nil {
@@ -50,17 +58,17 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 			statusHeader = http.StatusBadRequest
 		}
 	}
-	fmt.Printf("----- update: %s %v %+v %v %d <<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
+	fmt.Printf("%s update: %v %d <<\n", uuid, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	var (
-		statusHeader = http.StatusOK
 		err          error
+		statusHeader = http.StatusOK
 	)
+
 	defer func() {
 		if err != nil {
-			fmt.Println("HEADER: >>>>>>>>>>>>>>>>>>>>>>>>>>>", statusHeader)
 			w.WriteHeader(statusHeader)
 		}
 	}()
@@ -70,25 +78,23 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		Name: chi.URLParam(r, "name"),
 	}
 
+	uuid := getUUID()
+	fmt.Printf("%s value: %s %v %+v <<\n", uuid, r.Method, r.URL.Path, *storageParams)
+
 	defer func() {
-		fmt.Printf("----- value: %s %v %+v %v %d<<\n", r.Method, r.URL.Path, *storageParams, err, statusHeader)
+		fmt.Printf("%s value: %s %v %d <<\n", uuid, storageParams.String, err, statusHeader)
 	}()
 
 	err = t.storage.GetMetricString(storageParams)
-	fmt.Println("VALUE: >>>>>>>>>>>>>>>>>>>>>>>>>>>", err)
 	if err != nil {
-		fmt.Println("ERROR: >>>>>>>>>>>>>>>>>>>>>>>>>>>", err)
 		switch {
 		case errors.Is(err, common.ErrMetricNotFound):
-			fmt.Println("STATUS NOT FOUND: >>>>>>>>>>>>>>>>>>>>>>>>>>>", err)
 			statusHeader = http.StatusNotFound
 		default:
-			fmt.Println("BAD REQUEST: >>>>>>>>>>>>>>>>>>>>>>>>>>>", err)
 			statusHeader = http.StatusBadRequest
 		}
 		return
 	}
-	fmt.Println(storageParams.String)
 	_, _ = fmt.Fprint(w, storageParams.String)
 }
 
