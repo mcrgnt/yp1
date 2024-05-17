@@ -1,5 +1,12 @@
 package storage
 
+type StorageParams struct {
+	Value  any
+	String string
+	Type   string
+	Name   string
+}
+
 type Storage interface {
 	MetricSet(*StorageParams) error
 	MetricReset(*StorageParams) error
@@ -14,9 +21,9 @@ type NewMemStorageParams struct {
 func NewStorage(params *NewMemStorageParams) (storage Storage) {
 	switch params.Type {
 	case "memory":
-		storage = NewMemory()
+		storage = NewMemStorage()
 	default:
-		storage = NewMemory()
+		storage = NewMemStorage()
 	}
 	return
 }

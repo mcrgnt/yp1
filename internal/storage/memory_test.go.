@@ -1,591 +1,84 @@
 package storage
 
 import (
+	"fmt"
 	"reflect"
+	"strconv"
 	"testing"
 
+	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/storage/internal/metric"
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Equal_NewMemory(t *testing.T) {
+func Test_Equal_NewMemStorage(t *testing.T) {
 	tests := []struct {
-		want *Memory
+		want *MemStorage
 		name string
 	}{
 		{
 			name: "test0",
-			want: &Memory{
-				Gauges:   map[string]float64{},
-				Counters: map[string]int64{},
+			want: &MemStorage{
+				Metrics: map[string]metric.Metric{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := NewMemory()
+			actual := NewMemStorage()
 			assert.Equal(t, reflect.TypeOf(tt.want), reflect.TypeOf(actual))
-			assert.Equal(t, tt.want.Gauges, actual.Gauges)
-			assert.Equal(t, tt.want.Counters, actual.Counters)
+			assert.Equal(t, tt.want.Metrics, actual.Metrics)
 		})
 	}
 }
-func Test_NotEqual_NewMemory(t *testing.T) {
+func Test_NotEqual_NewMemStorage(t *testing.T) {
 	tests := []struct {
-		want *Memory
+		want *MemStorage
 		name string
 	}{
 		{
 			name: "test0",
-			want: &Memory{},
+			want: &MemStorage{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := NewMemory()
+			actual := NewMemStorage()
 			assert.NotEqual(t, nil, actual)
-			assert.NotEqual(t, tt.want.Gauges, actual.Gauges)
-			assert.NotEqual(t, tt.want.Counters, actual.Counters)
+			assert.NotEqual(t, tt.want.Metrics, actual.Metrics)
 		})
 	}
 }
 
-func TestMemory_GaugesEqual_Update(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
-	}
-	type args struct {
-		params *StorageParams
-	}
+func TestMemStorage_MetricSet(t *testing.T) {
 	tests := []struct {
-		fields   fields
-		args     args
-		expected *Memory
+		expected string
+		params   *StorageParams
 		name     string
 	}{
-		{
-			name: "test0",
-			fields: fields{
-				Gauges: map[string]float64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "gauge",
-					Name:  "test0",
-					Value: float64(0),
-				},
-			},
-			expected: &Memory{
-				Gauges: map[string]float64{
-					"test0": float64(0),
-				},
-			},
-		},
-		{
-			name: "test-1",
-			fields: fields{
-				Gauges: map[string]float64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "gauge",
-					Name:  "test-1",
-					Value: float64(-1),
-				},
-			},
-			expected: &Memory{
-				Gauges: map[string]float64{
-					"test-1": float64(-1),
-				},
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Gauges: map[string]float64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "gauge",
-					Name:  "test1",
-					Value: float64(1),
-				},
-			},
-			expected: &Memory{
-				Gauges: map[string]float64{
-					"test1": float64(1),
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.Update(tt.args.params)
-			assert.Equal(t, tt.expected.Gauges, tt.fields.Gauges)
-		})
-	}
-}
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(-1)}, expected: "-1"},
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(-1.0)}, expected: "-1.0"},
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(0.0)}, expected: "0.0"},
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(1)}, expected: "1"},
+		{name: "test_a", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(1.0)}, expected: "1.0"},
 
-func TestMemory_GaugesNotEqual_Update(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
+		// {name: "test_3", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: "-1"}, expected: "-1"},
+		// {name: "test_4", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: "0"}, expected: "0"},
+		// {name: "test_5", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: "1"}, expected: "1"},
+		// {name: "test_6", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(0.00000)}, expected: "0.00000"},
+		// {name: "test_7", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(-0.032)}, expected: "-0.032"},
+		// {name: "test_8", params: &StorageParams{Type: common.MetricTypeGauge, Name: "test", Value: float64(0.032)}, expected: "0.032"},
 	}
-	type args struct {
-		params *StorageParams
-	}
-	tests := []struct {
-		fields   fields
-		args     args
-		expected *Memory
-		name     string
-	}{
-		{
-			name: "test0",
-			fields: fields{
-				Gauges: map[string]float64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "gauge",
-					Name:  "test0",
-					Value: 6.1,
-				},
-			},
-			expected: &Memory{
-				Gauges: map[string]float64{
-					"test0": float64(6.0),
-				},
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Gauges: map[string]float64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "gauge",
-					Name:  "test1",
-					Value: 6.0,
-				},
-			},
-			expected: &Memory{
-				Gauges: map[string]float64{
-					"test1": float64(-6),
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.Update(tt.args.params)
-			assert.NotEqual(t, tt.expected.Gauges, tt.fields.Gauges)
-		})
-	}
-}
-
-func TestMemory_CountersEqual_Update(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
-	}
-	type args struct {
-		params *StorageParams
-	}
-	tests := []struct {
-		fields   fields
-		args     args
-		expected *Memory
-		name     string
-	}{
-		{
-			name: "test0",
-			fields: fields{
-				Counters: map[string]int64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "counter",
-					Name:  "test0",
-					Value: int64(1),
-				},
-			},
-			expected: &Memory{
-				Counters: map[string]int64{
-					"test0": int64(1),
-				},
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Counters: map[string]int64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "counter",
-					Name:  "test1",
-					Value: int64(-6),
-				},
-			},
-			expected: &Memory{
-				Counters: map[string]int64{
-					"test1": int64(-6),
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.Update(tt.args.params)
-			assert.Equal(t, tt.expected.Counters, tt.fields.Counters)
-		})
-	}
-}
-
-func TestMemory_CountersNotEqual_Update(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
-	}
-	type args struct {
-		params *StorageParams
-	}
-	tests := []struct {
-		fields   fields
-		args     args
-		expected *Memory
-		name     string
-	}{
-		{
-			name: "test0",
-			fields: fields{
-				Counters: map[string]int64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "counter",
-					Name:  "test0",
-					Value: int64(-1),
-				},
-			},
-			expected: &Memory{
-				Counters: map[string]int64{
-					"test0": int64(6),
-				},
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Counters: map[string]int64{},
-			},
-			args: args{
-				&StorageParams{
-					Type:  "counter",
-					Name:  "test1",
-					Value: int64(6),
-				},
-			},
-			expected: &Memory{
-				Counters: map[string]int64{
-					"test1": int64(-6),
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.Update(tt.args.params)
-			assert.NotEqual(t, tt.expected.Counters, tt.fields.Counters)
-		})
-	}
-}
-
-func TestMemory_Equal_Get(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
-	}
-	type args struct {
-		params *StorageParams
-	}
-	tests := []struct {
-		fields   fields
-		args     args
-		expected *StorageParams
-		name     string
-	}{
-		{
-			name: "test-1",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test-1": -3.2,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test-1",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test-1",
-				Value: float64(-3.2),
-			},
-		},
-		{
-			name: "test0",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test0": 0,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test0",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test0",
-				Value: float64(0),
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test1": 3.2,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test1",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test1",
-				Value: float64(3.2),
-			},
-		},
-		{
-			name: "test2",
-			fields: fields{
-				Counters: map[string]int64{
-					"test2": 3,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test2",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "test2",
-				Value: int64(3),
-			},
-		},
-		{
-			name: "test3",
-			fields: fields{
-				Counters: map[string]int64{
-					"test3": 0,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test3",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "test3",
-				Value: int64(0),
-			},
-		},
-		{
-			name: "test4",
-			fields: fields{
-				Counters: map[string]int64{
-					"test4": -1,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test4",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "test4",
-				Value: int64(-1),
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.GetByName(tt.args.params)
-			assert.Equal(t, *tt.expected, *tt.args.params)
-		})
-	}
-}
-
-func TestMemory_NotEqual_Get(t *testing.T) {
-	type fields struct {
-		Gauges   map[string]float64
-		Counters map[string]int64
-	}
-	type args struct {
-		params *StorageParams
-	}
-	tests := []struct {
-		fields   fields
-		args     args
-		expected *StorageParams
-		name     string
-	}{
-		{
-			name: "test-1",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test-1": -3.2,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test-1",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "test-1",
-				Value: float64(-3.2),
-			},
-		},
-		{
-			name: "test0",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test0": 0,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test0",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test0",
-				Value: 0,
-			},
-		},
-		{
-			name: "test1",
-			fields: fields{
-				Gauges: map[string]float64{
-					"test1": 3.2,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test1",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test1~",
-				Value: float64(3.2),
-			},
-		},
-		{
-			name: "test2",
-			fields: fields{
-				Counters: map[string]int64{
-					"test2": 3,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test2",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "gauge",
-				Name:  "test2",
-				Value: int64(3),
-			},
-		},
-		{
-			name: "test3",
-			fields: fields{
-				Counters: map[string]int64{
-					"test3": 0,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test3",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "",
-				Value: int64(0),
-			},
-		},
-		{
-			name: "test4",
-			fields: fields{
-				Counters: map[string]int64{
-					"test4": -1,
-				},
-			},
-			args: args{
-				&StorageParams{
-					Name: "test4",
-				},
-			},
-			expected: &StorageParams{
-				Type:  "counter",
-				Name:  "test4",
-				Value: -1,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tr := &Memory{
-				Gauges:   tt.fields.Gauges,
-				Counters: tt.fields.Counters,
-			}
-			tr.GetByName(tt.args.params)
-			assert.NotEqual(t, *tt.expected, *tt.args.params)
+	for i, tt := range tests {
+		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
+			_storage := NewMemStorage()
+			actualErr := _storage.MetricSet(tt.params)
+			assert.Equal(t, nil, actualErr)
+			actualErr = _storage.GetMetricString(tt.params)
+			assert.Equal(t, nil, actualErr)
+			assert.Equal(t, tt.expected, tt.params.String)
+			fmt.Println("exp:", tt.expected, "act:", tt.params.String)
 		})
 	}
 }

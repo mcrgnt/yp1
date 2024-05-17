@@ -13,7 +13,7 @@ type MemStorage struct {
 	mu      sync.Mutex
 }
 
-func NewMemory() *MemStorage {
+func NewMemStorage() *MemStorage {
 	return &MemStorage{
 		Metrics: map[string]metric.Metric{},
 	}

@@ -25,6 +25,7 @@ func fromAnyToFloat64(value any) (float64, error) {
 		return v, nil
 	case string:
 		_v, e := strconv.ParseFloat(v, 64)
+		fmt.Println(":::::::::::::::::::::::::: PARSE:", v, "->", _v)
 		if e != nil {
 			return 0, fmt.Errorf("convert to float64: %w", e)
 		}
@@ -58,5 +59,6 @@ func (t *Gauge) Type() string {
 }
 
 func (t *Gauge) String() string {
+	fmt.Println("FORMAT:", t.Value, strconv.FormatFloat(t.Value, 'f', -1, 64))
 	return strconv.FormatFloat(t.Value, 'f', -1, 64)
 }

@@ -43,7 +43,6 @@ var (
 		"Sys",
 		"TotalAlloc",
 	}
-	metricsTypeNames = map[string][]string{}
 )
 
 type PollMetricsParams struct {
@@ -53,32 +52,31 @@ type PollMetricsParams struct {
 func PollMetrics(params *PollMetricsParams) {
 	runtime.ReadMemStats(MemStats)
 	pollMetrics(params)
-	_ = params.Storage.MetricSet(&storage.StorageParams{
-		Type:  "gauge",
-		Name:  "RandomValue",
-		Value: rand.Float64(),
-	})
-	_ = params.Storage.MetricSet(&storage.StorageParams{
-		Type:  "counter",
-		Name:  "PollCount",
-		Value: int64(1),
-	})
+	{
+		err := params.Storage.MetricSet(&storage.StorageParams{
+			Type:  common.MetricTypeGauge,
+			Name:  "RandomValue",
+			Value: rand.Float64(),
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	{
+		err := params.Storage.MetricSet(&storage.StorageParams{
+			Type:  common.MetricTypeCounter,
+			Name:  "PollCount",
+			Value: int64(1),
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 type ReportMetricsParams struct {
 	Storage storage.Storage
 	Address string
-}
-
-func getFullMetricsGaugeNamesList() (metricsNamesList []string) {
-	metricsNamesList = append(metricsNamesList, PollMetricsFromMemStatsList...)
-	metricsNamesList = append(metricsNamesList, "RandomValue")
-	return
-}
-
-func getFullMetricsCounterNamesList() (metricsNamesList []string) {
-	metricsNamesList = append(metricsNamesList, "PollCount")
-	return
 }
 
 func ReportMetrics(params *ReportMetricsParams) {
@@ -111,6 +109,21 @@ func ReportMetrics(params *ReportMetricsParams) {
 		Type: common.MetricTypeCounter,
 		Name: "PollCount",
 	})
+}
+
+var (
+	metricsTypeNames = map[string][]string{}
+)
+
+func getFullMetricsGaugeNamesList() (metricsNamesList []string) {
+	metricsNamesList = append(metricsNamesList, PollMetricsFromMemStatsList...)
+	metricsNamesList = append(metricsNamesList, "RandomValue")
+	return
+}
+
+func getFullMetricsCounterNamesList() (metricsNamesList []string) {
+	metricsNamesList = append(metricsNamesList, "PollCount")
+	return
 }
 
 func init() {

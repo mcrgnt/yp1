@@ -12,7 +12,7 @@ func TestNewMemStorage(t *testing.T) {
 		params *NewMemStorageParams
 	}
 	tests := []struct {
-		wantMemStorage MemStorage
+		wantMemStorage Storage
 		args           args
 		name           string
 	}{
@@ -21,7 +21,7 @@ func TestNewMemStorage(t *testing.T) {
 			args: args{
 				&NewMemStorageParams{},
 			},
-			wantMemStorage: &Memory{},
+			wantMemStorage: &MemStorage{},
 		},
 		{
 			name: "test1",
@@ -30,12 +30,12 @@ func TestNewMemStorage(t *testing.T) {
 					Type: "t",
 				},
 			},
-			wantMemStorage: &Memory{},
+			wantMemStorage: &MemStorage{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := NewMemStorage(tt.args.params)
+			actual := NewStorage(tt.args.params)
 			assert.Equal(t, reflect.TypeOf(tt.wantMemStorage), reflect.TypeOf(actual))
 		})
 	}

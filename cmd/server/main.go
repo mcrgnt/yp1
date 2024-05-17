@@ -20,7 +20,7 @@ func main() {
 
 	graseful, err := srv.Run(ctx)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal(err)
+		log.Fatalf("run server: %v", err)
 	}
 	<-graseful
 }
