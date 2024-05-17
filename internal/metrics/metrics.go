@@ -105,10 +105,13 @@ func ReportMetrics(params *ReportMetricsParams) {
 		}
 	}
 
-	_ = params.Storage.MetricReset(&storage.StorageParams{
+	err = params.Storage.MetricReset(&storage.StorageParams{
 		Type: common.MetricTypeCounter,
 		Name: "PollCount",
 	})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 var (
