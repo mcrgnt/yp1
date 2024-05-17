@@ -71,7 +71,6 @@ func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 }
 
 func (t *MemStorage) GetMetricString(params *StorageParams) (err error) {
-	fmt.Println("ALL:", t.GetMetricAll())
 	t.mu.Lock()
 	if v, ok := t.isMetricExistsValue(params); ok {
 		params.String = v.String()
