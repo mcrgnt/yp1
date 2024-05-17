@@ -15,15 +15,20 @@ func TestNewMetric(t *testing.T) {
 		expected    Metric
 		expectedErr error
 	}{
-		{name: "test_",
+		{
+			name:     "test_",
 			params:   &NewMetricParams{Type: common.TypeMetricGauge, Value: float64(1)},
 			expected: &Gauge{Value: 1}},
-		{name: "test_",
+		{
+			name:     "test_",
 			params:   &NewMetricParams{Type: common.TypeMetricCounter, Value: int64(1)},
 			expected: &Counter{Value: 1}},
-		{name: "test_",
-			params:   &NewMetricParams{Type: "", Value: int64(1)},
-			expected: nil, expectedErr: common.ErrNotImplementedMetricType},
+		{
+			name:        "test_",
+			params:      &NewMetricParams{Type: "", Value: int64(1)},
+			expected:    nil,
+			expectedErr: common.ErrNotImplementedMetricType,
+		},
 	}
 
 	for i, tt := range tests {
