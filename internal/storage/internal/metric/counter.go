@@ -45,7 +45,11 @@ func NewCounter(params *NewCounterParams) (counter *Counter, err error) {
 }
 
 func (t *Counter) Set(value any) (err error) {
-	t.Value, err = fromAnyToInt64(value)
+	newValue, err := fromAnyToInt64(value)
+	if err != nil {
+		return
+	}
+	t.Value += newValue
 	return
 }
 
