@@ -15,12 +15,11 @@ func TestPollMetrics(t *testing.T) {
 		args args
 		name string
 	}{
-		// TODO: Add test cases.
 		{
 			name: "test0",
 			args: args{
 				params: &PollMetricsParams{
-					Storage: storage.NewMemStorage(&storage.NewMemStorageParams{}),
+					Storage: storage.NewMemStorage(),
 				},
 			},
 		},
@@ -28,7 +27,7 @@ func TestPollMetrics(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			PollMetrics(tt.args.params)
-			assert.NotEqual(t, storage.Memory{}, tt.args.params.Storage)
+			assert.NotEqual(t, storage.MemStorage{}, tt.args.params.Storage)
 		})
 	}
 }

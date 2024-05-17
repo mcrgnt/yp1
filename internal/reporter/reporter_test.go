@@ -17,7 +17,6 @@ func TestReporter_report(t *testing.T) {
 		wantResponse string
 		wantErr      bool
 	}{
-		// TODO: Add test cases.
 		{
 			name:   "test0",
 			fields: fields{},
