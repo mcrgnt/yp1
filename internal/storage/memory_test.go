@@ -55,35 +55,61 @@ func TestMemStorage_MetricSetGaugeEqual(t *testing.T) {
 		params   *StorageParams
 		name     string
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(-1)}, expected: "-1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(-1.0)}, expected: "-1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(-1.0001)}, expected: "-1.0001"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0.0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0.0001)}, expected: "0.0001"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(1)}, expected: "1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(1.0)}, expected: "1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(1.0001)}, expected: "1.0001"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(-1)}, expected: "-1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(-1.0)}, expected: "-1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(-1.0001)}, expected: "-1.0001"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0.0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0.0001)}, expected: "0.0001"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(1)}, expected: "1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(1.0)}, expected: "1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(1.0001)}, expected: "1.0001"},
 
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint64(0)}, expected: "0"},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint64(0.0)}, expected: "0"},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint64(1)}, expected: "1"},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint64(1.0)}, expected: "1"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint64(0)}, expected: "0"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint64(0.0)}, expected: "0"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint64(1)}, expected: "1"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint64(1.0)}, expected: "1"},
 
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint32(0)}, expected: "0"},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint32(0.0)}, expected: "0"},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint32(1)}, expected: "1"},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: uint32(1.0)}, expected: "1"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint32(0)}, expected: "0"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint32(0.0)}, expected: "0"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint32(1)}, expected: "1"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: uint32(1.0)}, expected: "1"},
 
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "-1"}, expected: "-1"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "-1.0"}, expected: "-1"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "-1.0001"}, expected: "-1.0001"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "0"}, expected: "0"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "0.0"}, expected: "0"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "0.0001"}, expected: "0.0001"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "1"}, expected: "1"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "1.0"}, expected: "1"},
-		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "1.0001"}, expected: "1.0001"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "-1"}, expected: "-1"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "-1.0"}, expected: "-1"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "-1.0001"}, expected: "-1.0001"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "0"}, expected: "0"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "0.0"}, expected: "0"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "0.0001"}, expected: "0.0001"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "1"}, expected: "1"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "1.0"}, expected: "1"},
+		{name: "test_d", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "1.0001"}, expected: "1.0001"},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
@@ -103,13 +129,19 @@ func TestMemStorage_MetricSetCounterEqual(t *testing.T) {
 		params   *StorageParams
 		name     string
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(0.0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(1)}, expected: "1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(1.0)}, expected: "1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(0.0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(1)}, expected: "1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(1.0)}, expected: "1"},
 
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: "0"}, expected: "0"},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: "1"}, expected: "1"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: "0"}, expected: "0"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: "1"}, expected: "1"},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
@@ -129,13 +161,19 @@ func TestMemStorage_MetricSetGaugeErr(t *testing.T) {
 		name        string
 		expectedErr error
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: int32(0)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: int32(1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: int32(0)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: int32(1)}, expectedErr: common.ErrIncompatibleMetricValueType},
 
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: ""}, expectedErr: strconv.ErrSyntax},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "1.79769313486231570814527423731704356798070e+309"}, expectedErr: strconv.ErrRange},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: "1.000000o1"}, expectedErr: strconv.ErrSyntax},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: ""}, expectedErr: strconv.ErrSyntax},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "1.79769313486231570814527423731704356798070e+309"}, expectedErr: strconv.ErrRange},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: "1.000000o1"}, expectedErr: strconv.ErrSyntax},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
@@ -152,17 +190,27 @@ func TestMemStorage_MetricSetCounterErr(t *testing.T) {
 		name        string
 		expectedErr error
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int32(0)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int32(1)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(-1)}, expectedErr: common.ErrIncompatibleMetricValue},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: float64(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: float64(-1.00001)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int32(0)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int32(1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(-1)}, expectedErr: common.ErrIncompatibleMetricValue},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: float64(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: float64(-1.00001)}, expectedErr: common.ErrIncompatibleMetricValueType},
 
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: ""}, expectedErr: strconv.ErrSyntax},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: "1.79769313486231570814527423731704356798070e+309"}, expectedErr: strconv.ErrSyntax},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: "1.000000o1"}, expectedErr: strconv.ErrSyntax},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: "-1"}, expectedErr: common.ErrIncompatibleMetricValue},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: ""}, expectedErr: strconv.ErrSyntax},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: "1.79769313486231570814527423731704356798070e+309"}, expectedErr: strconv.ErrSyntax},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: "1.000000o1"}, expectedErr: strconv.ErrSyntax},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: "-1"}, expectedErr: common.ErrIncompatibleMetricValue},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
@@ -179,8 +227,10 @@ func TestMemStorage_MetricSetWrongType(t *testing.T) {
 		name        string
 		expectedErr error
 	}{
-		{name: "test_a", params: &StorageParams{Type: "", Name: "test", Value: int64(0)}, expectedErr: common.ErrNotImplementedMetricType},
-		{name: "test_a", params: &StorageParams{Type: "empty", Name: "test", Value: int64(0)}, expectedErr: common.ErrNotImplementedMetricType},
+		{name: "test_a", params: &StorageParams{Type: "",
+			Name: "test", Value: int64(0)}, expectedErr: common.ErrNotImplementedMetricType},
+		{name: "test_a", params: &StorageParams{Type: "empty",
+			Name: "test", Value: int64(0)}, expectedErr: common.ErrNotImplementedMetricType},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
@@ -214,12 +264,18 @@ func TestMemStorage_MetricGaugeSequentialSet(t *testing.T) {
 		name     string
 		expected string
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(3)}, expected: "3"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(6)}, expected: "6"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(9)}, expected: "9"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(-3)}, expected: "-3"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(3)}, expected: "3"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(6)}, expected: "6"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(9)}, expected: "9"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(-3)}, expected: "-3"},
 	}
 
 	_storage := NewMemStorage()
@@ -241,12 +297,18 @@ func TestMemStorage_MetricCounterSequentialSet(t *testing.T) {
 		name     string
 		expected string
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "3"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "6"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "9"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "12"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "15"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "3"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "6"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "9"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "12"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "15"},
 	}
 
 	_storage := NewMemStorage()
@@ -269,20 +331,32 @@ func TestMemStorage_MetricSequentialSet(t *testing.T) {
 		expected    string
 		expectedErr error
 	}{
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(0)}, expected: "0"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "3"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(3)}, expected: "3"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "6"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test", Value: float64(-1)}, expected: "-1"},
-		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test", Value: int64(3)}, expected: "9"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(0)}, expected: "0"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "3"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(3)}, expected: "3"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "6"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test", Value: float64(-1)}, expected: "-1"},
+		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test", Value: int64(3)}, expected: "9"},
 
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test1", Value: float64(888)}, expected: "888"},
-		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge, Name: "test1", Value: int64(-1)}, expected: "888", expectedErr: common.ErrIncompatibleMetricValueType},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test1", Value: float64(888)}, expected: "888"},
+		{name: "test_b", params: &StorageParams{Type: common.TypeMetricGauge,
+			Name: "test1", Value: int64(-1)}, expected: "888", expectedErr: common.ErrIncompatibleMetricValueType},
 
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test2", Value: int64(999)}, expected: "999"},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test2", Value: "-1"}, expected: "999", expectedErr: common.ErrIncompatibleMetricValue},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test2", Value: int64(999)}, expected: "1998"},
-		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter, Name: "test2", Value: "-1"}, expected: "1998", expectedErr: common.ErrIncompatibleMetricValue},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test2", Value: int64(999)}, expected: "999"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test2", Value: "-1"}, expected: "999", expectedErr: common.ErrIncompatibleMetricValue},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test2", Value: int64(999)}, expected: "1998"},
+		{name: "test_c", params: &StorageParams{Type: common.TypeMetricCounter,
+			Name: "test2", Value: "-1"}, expected: "1998", expectedErr: common.ErrIncompatibleMetricValue},
 	}
 
 	_storage := NewMemStorage()
