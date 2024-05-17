@@ -46,8 +46,8 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 		Name:  chi.URLParam(r, "name"),
 		Value: chi.URLParam(r, "value"),
 	}
-	uuid := getUUID()
-	fmt.Printf("%s update: %s %v %+v <<\n", uuid, r.Method, r.URL.Path, *storageParams)
+	_uuid := getUUID()
+	fmt.Printf("%s update: %s %v %+v <<\n", _uuid, r.Method, r.URL.Path, *storageParams)
 
 	err = t.storage.MetricSet(storageParams)
 	if err != nil {
@@ -58,7 +58,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 			statusHeader = http.StatusBadRequest
 		}
 	}
-	fmt.Printf("%s update: %v %d <<\n", uuid, err, statusHeader)
+	fmt.Printf("%s update: %v %d <<\n", _uuid, err, statusHeader)
 }
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
@@ -78,11 +78,11 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		Name: chi.URLParam(r, "name"),
 	}
 
-	uuid := getUUID()
-	fmt.Printf("%s value: %s %v %+v <<\n", uuid, r.Method, r.URL.Path, *storageParams)
+	_uuid := getUUID()
+	fmt.Printf("%s value: %s %v %+v <<\n", _uuid, r.Method, r.URL.Path, *storageParams)
 
 	defer func() {
-		fmt.Printf("%s value: %s %v %d <<\n", uuid, storageParams.String, err, statusHeader)
+		fmt.Printf("%s value: %s %v %d <<\n", _uuid, storageParams.String, err, statusHeader)
 	}()
 
 	err = t.storage.GetMetricString(storageParams)
