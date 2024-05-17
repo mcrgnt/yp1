@@ -8,28 +8,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCounter(t *testing.T) {
+func TestGuageCounter(t *testing.T) {
 	tests := []struct {
-		params              *NewCounterParams
+		params              any
 		expectedType        string
-		expectedValue       int64
+		expectedValue       any
 		expectedString      string
 		expectedResetString string
 		name                string
 	}{
 		{
 			name:                "test_a",
-			params:              &NewCounterParams{Value: "0"},
-			expectedType:        common.TypeMetricCounter,
-			expectedValue:       int64(0),
+			params:              &NewGaugeParams{Value: "0"},
+			expectedType:        common.TypeMetricGauge,
 			expectedString:      "0",
 			expectedResetString: "0",
 		},
 		{
 			name:                "test_a",
+			params:              &NewGaugeParams{Value: "10"},
+			expectedType:        common.TypeMetricGauge,
+			expectedString:      "10",
+			expectedResetString: "0",
+		},
+		{
+			name:                "test_b",
+			params:              &NewCounterParams{Value: "0"},
+			expectedType:        common.TypeMetricCounter,
+			expectedString:      "0",
+			expectedResetString: "0",
+		},
+		{
+			name:                "test_b",
 			params:              &NewCounterParams{Value: "10"},
 			expectedType:        common.TypeMetricCounter,
-			expectedValue:       int64(10),
 			expectedString:      "10",
 			expectedResetString: "0",
 		},
@@ -37,10 +49,18 @@ func TestCounter(t *testing.T) {
 
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
-			actual, actualErr := NewCounter(tt.params)
+			var (
+				actual    Metric
+				actualErr error
+			)
+			switch tt.expectedType {
+			case common.TypeMetricCounter:
+				actual, actualErr = NewCounter(tt.params.(*NewCounterParams))
+			default:
+				actual, actualErr = NewGauge(tt.params.(*NewGaugeParams))
+			}
 			assert.Equal(t, nil, actualErr)
 			assert.Equal(t, tt.expectedType, actual.Type())
-			assert.Equal(t, tt.expectedValue, actual.Value)
 			assert.Equal(t, tt.expectedString, actual.String())
 			actual.Reset()
 			assert.Equal(t, tt.expectedResetString, actual.String())
