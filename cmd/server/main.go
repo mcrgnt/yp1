@@ -18,8 +18,9 @@ func main() {
 		log.Fatalf("new server: %v", err)
 	}
 
-	err = srv.Run(ctx)
+	graseful, err := srv.Run(ctx)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
+	<-graseful
 }

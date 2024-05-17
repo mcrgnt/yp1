@@ -32,18 +32,22 @@ func NewServer() (server *Server, err error) {
 	return
 }
 
-func (t *Server) Run(ctx context.Context) error {
+func (t *Server) Run(ctx context.Context) (chan struct{}, error) {
+	graseful := make(chan struct{})
+
 	go func() {
 		<-ctx.Done()
-		t.shutdown(ctx)
+		t.shutdown(context.Background(), graseful)
 	}()
+
 	err := t.api.Run()
 	if err != nil {
-		return fmt.Errorf("server run: %w", err)
+		return graseful, fmt.Errorf("server run: %w", err)
 	}
-	return nil
+	return graseful, nil
 }
 
-func (t *Server) shutdown(ctx context.Context) {
+func (t *Server) shutdown(ctx context.Context, graseful chan struct{}) {
 	t.api.Shutdown(ctx)
+	close(graseful)
 }
