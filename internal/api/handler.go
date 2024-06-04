@@ -42,6 +42,8 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 		returnBody    []byte
 	)
 
+	w.Header().Set(contentType, applicationJSON)
+
 	defer func() {
 		if err != nil {
 			switch {
@@ -51,7 +53,6 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 				statusHeader = http.StatusBadRequest
 			}
 		}
-		w.Header().Set(contentType, applicationJSON)
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
@@ -109,6 +110,8 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		returnBody    []byte
 	)
 
+	w.Header().Set(contentType, applicationJSON)
+
 	defer func() {
 		if err != nil {
 			switch {
@@ -119,7 +122,6 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 			}
 			return
 		}
-		w.Header().Set(contentType, applicationJSON)
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
