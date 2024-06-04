@@ -45,6 +45,9 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 	w.Header().Set(contentType, applicationJSON)
 
 	defer func() {
+		if len(returnBody) == 0 {
+			err = common.ErrMetricNotFound
+		}
 		if err != nil {
 			switch {
 			case errors.Is(err, common.ErrEmptyMetricName):
@@ -113,6 +116,9 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 	w.Header().Set(contentType, applicationJSON)
 
 	defer func() {
+		if len(returnBody) == 0 {
+			err = common.ErrMetricNotFound
+		}
 		if err != nil {
 			switch {
 			case errors.Is(err, common.ErrMetricNotFound):
