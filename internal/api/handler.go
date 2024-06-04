@@ -13,6 +13,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const (
+	contentType     = "Content-Type"
+	applicationJSON = "application/json"
+)
+
 var (
 	htmlHeader = `<!DOCTYPE html><html><head><title>Metrics</title></head><body>`
 	htmlFooter = `</body></html>`
@@ -46,13 +51,13 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 				statusHeader = http.StatusBadRequest
 			}
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentType, applicationJSON)
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get("Content-Type") {
-	case "application/json":
+	switch r.Header.Get(contentType) {
+	case applicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
@@ -114,13 +119,13 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 			}
 			return
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(contentType, applicationJSON)
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get("Content-Type") {
-	case "application/json":
+	switch r.Header.Get(contentType) {
+	case applicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
