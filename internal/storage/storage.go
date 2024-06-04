@@ -80,9 +80,13 @@ func (t *StorageParams) UnmarshalJSON(bb []byte) error {
 		t.Type = temp.MType
 		switch t.Type {
 		case "counter":
-			t.Value = *temp.Delta
+			if temp.Delta != nil {
+				t.Value = *temp.Delta
+			}
 		case "gauge":
-			t.Value = *temp.Value
+			if temp.Value != nil {
+				t.Value = *temp.Value
+			}
 		default:
 			return fmt.Errorf("not implemented type: %s", t.Type)
 		}

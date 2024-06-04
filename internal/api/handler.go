@@ -30,7 +30,6 @@ type NewDefaultHandlerParams struct {
 }
 
 func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(*r)
 	var (
 		err           error
 		statusHeader  = http.StatusOK
@@ -124,7 +123,7 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
-		err = t.storage.GetMetricString(storageParams)
+		err = t.storage.GetMetric(storageParams)
 	default:
 		err = errors.New("not found")
 		return
