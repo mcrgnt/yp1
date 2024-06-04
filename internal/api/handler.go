@@ -46,12 +46,12 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 				statusHeader = http.StatusBadRequest
 			}
 		}
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get("content-type") {
+	switch r.Header.Get("Content-Type") {
 	case "application/json":
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
@@ -114,11 +114,12 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 			}
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get("content-type") {
+	switch r.Header.Get("Content-Type") {
 	case "application/json":
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
