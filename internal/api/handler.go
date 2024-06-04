@@ -173,6 +173,7 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 
 func (t *DefaultHandler) midLogger(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(*r)
 		start := time.Now()
 		responseData := &responseData{
 			status: 0,
