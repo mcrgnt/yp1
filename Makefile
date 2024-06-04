@@ -1,5 +1,10 @@
 GOLANGCI_LINT_CACHE?=/tmp/praktikum-golangci-lint-cache
 
+.PHONY: fieldalignment
+fieldalignment:
+	-@find . -type d -not -name ".*"|while read path; do if [ `find $$path -maxdepth 1 -name *.go|wc -l` -gt 0 ]; then fieldalignment -fix `find $$path -maxdepth 1 -name *.go`; fi; done
+
+
 .PHONY: golangci-lint-run
 golangci-lint-run: _golangci-lint-rm-unformatted-report
 
@@ -29,3 +34,11 @@ _golangci-lint-rm-unformatted-report: _golangci-lint-format-report
 .PHONY: golangci-lint-clean
 golangci-lint-clean:
 	sudo rm -rf ./golangci-lint
+
+.PHONY: server
+server:
+	cd cmd/server; go run .
+
+.PHONY: agent
+agent:
+	cd cmd/agent; go run .

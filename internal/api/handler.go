@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -18,10 +20,12 @@ var (
 type DefaultHandler struct {
 	storage storage.Storage
 	R       *chi.Mux
+	logger  *zerolog.Logger
 }
 
 type NewDefaultHandlerParams struct {
 	Storage storage.Storage
+	Logger  *zerolog.Logger
 }
 
 func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
@@ -31,9 +35,7 @@ func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
 	)
 
 	defer func() {
-		if err != nil {
-			w.WriteHeader(statusHeader)
-		}
+		w.WriteHeader(statusHeader)
 	}()
 
 	storageParams := &storage.StorageParams{
@@ -60,9 +62,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 	)
 
 	defer func() {
-		if err != nil {
-			w.WriteHeader(statusHeader)
-		}
+		w.WriteHeader(statusHeader)
 	}()
 
 	storageParams := &storage.StorageParams{
@@ -84,19 +84,43 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
+}
+
+func (t *DefaultHandler) midLogger(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		responseData := &responseData{
+			status: 0,
+			size:   0,
+		}
+		lw := &loggingResponseWriter{
+			ResponseWriter: w,
+			responseData:   responseData,
+		}
+		h.ServeHTTP(lw, r)
+
+		t.logger.Info().Msgf("url (%s) method (%s) status (%d) duration (%v) size (%d)",
+			r.RequestURI,
+			r.Method,
+			responseData.status,
+			time.Since(start),
+			responseData.size)
+	})
 }
 
 func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {
 	handler = &DefaultHandler{
 		storage: params.Storage,
 		R:       chi.NewRouter(),
+		logger:  params.Logger,
 	}
 
-	handler.R.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
-	handler.R.Post("/update/{type}/", handler.handlerUpdate)
-	handler.R.Get("/value/{type}/{name}", handler.handlerValue)
-	handler.R.Get("/", handler.handlerRoot)
+	handler.R.Post("/update/{type}/{name}/{value}", handler.midLogger(handler.handlerUpdate))
+	handler.R.Post("/update/{type}/", handler.midLogger(handler.handlerUpdate))
+	handler.R.Get("/value/{type}/{name}", handler.midLogger(handler.handlerValue))
+	handler.R.Get("/", handler.midLogger(handler.handlerRoot))
 
 	return
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/mcrgnt/yp1/internal/api"
 	"github.com/mcrgnt/yp1/internal/server/config"
 	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/rs/zerolog"
 )
 
 type Server struct {
@@ -14,7 +15,11 @@ type Server struct {
 	address string
 }
 
-func NewServer() (server *Server, err error) {
+type NewServerParams struct {
+	Logger *zerolog.Logger
+}
+
+func NewServer(params *NewServerParams) (server *Server, err error) {
 	server = &Server{}
 	cfg, err := config.NewConfig()
 	if err != nil {
@@ -27,6 +32,7 @@ func NewServer() (server *Server, err error) {
 		Storage: storage.NewStorage(&storage.NewMemStorageParams{
 			Type: cfg.StorageType,
 		}),
+		Logger: params.Logger,
 	})
 
 	return

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/rs/zerolog"
 )
 
 type API struct {
@@ -15,6 +16,7 @@ type API struct {
 
 type NewAPIParams struct {
 	Storage storage.Storage
+	Logger  *zerolog.Logger
 	Address string
 }
 
@@ -28,6 +30,7 @@ func NewAPI(params *NewAPIParams) (api *API) {
 
 	api.srv.Handler = NewDefaultHandler(&NewDefaultHandlerParams{
 		Storage: params.Storage,
+		Logger:  params.Logger,
 	}).R
 	return
 }

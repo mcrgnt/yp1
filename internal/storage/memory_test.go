@@ -157,9 +157,9 @@ func TestMemStorage_MetricSetCounterEqual(t *testing.T) {
 
 func TestMemStorage_MetricSetGaugeErr(t *testing.T) {
 	tests := []struct {
+		expectedErr error
 		params      *StorageParams
 		name        string
-		expectedErr error
 	}{
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
 			Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
@@ -186,9 +186,9 @@ func TestMemStorage_MetricSetGaugeErr(t *testing.T) {
 
 func TestMemStorage_MetricSetCounterErr(t *testing.T) {
 	tests := []struct {
+		expectedErr error
 		params      *StorageParams
 		name        string
-		expectedErr error
 	}{
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
 			Name: "test", Value: int32(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
@@ -223,9 +223,9 @@ func TestMemStorage_MetricSetCounterErr(t *testing.T) {
 
 func TestMemStorage_MetricSetWrongType(t *testing.T) {
 	tests := []struct {
+		expectedErr error
 		params      *StorageParams
 		name        string
-		expectedErr error
 	}{
 		{name: "test_a", params: &StorageParams{Type: "",
 			Name: "test", Value: int64(0)}, expectedErr: common.ErrNotImplementedMetricType},
@@ -243,9 +243,9 @@ func TestMemStorage_MetricSetWrongType(t *testing.T) {
 
 func TestMemStorage_MetricSetEmptyName(t *testing.T) {
 	tests := []struct {
+		expectedErr error
 		params      *StorageParams
 		name        string
-		expectedErr error
 	}{
 		{name: "test_a", params: &StorageParams{Type: "", Name: "", Value: int64(0)}, expectedErr: common.ErrEmptyMetricName},
 	}
@@ -326,10 +326,10 @@ func TestMemStorage_MetricCounterSequentialSet(t *testing.T) {
 
 func TestMemStorage_MetricSequentialSet(t *testing.T) {
 	tests := []struct {
+		expectedErr error
 		params      *StorageParams
 		name        string
 		expected    string
-		expectedErr error
 	}{
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricGauge,
 			Name: "test", Value: float64(0)}, expected: "0"},

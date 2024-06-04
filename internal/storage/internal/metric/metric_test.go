@@ -10,10 +10,10 @@ import (
 
 func TestNewMetric(t *testing.T) {
 	tests := []struct {
-		params      *NewMetricParams
-		name        string
 		expected    Metric
 		expectedErr error
+		params      *NewMetricParams
+		name        string
 	}{
 		{
 			name:     "test_",
