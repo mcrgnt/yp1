@@ -2,6 +2,7 @@ package reporter
 
 import (
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,7 +16,29 @@ type ReportParams struct {
 }
 
 func (t *Reporter) report(params *ReportParams) (response string, err error) {
-	resp, err := http.Post(params.URL, "application/json", bytes.NewReader(params.Body))
+	var buf bytes.Buffer
+	g := gzip.NewWriter(&buf)
+
+	if _, err = g.Write(params.Body); err != nil {
+		return
+	}
+
+	if err = g.Close(); err != nil {
+		return
+	}
+
+	var (
+		req *http.Request
+	)
+	if req, err = http.NewRequest("POST", params.URL, &buf); err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept-Encoding", "gzip")
+	req.Header.Set("Content-Encoding", "gzip")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		err = fmt.Errorf("report response: %w", err)
 		return

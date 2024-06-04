@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	contentType     = "Content-Type"
-	applicationJSON = "application/json"
+	contentType       = "Content-Type"
+	ctApplicationJSON = "application/json"
+	ctTextHTML        = "text/html"
 )
 
 var (
@@ -42,7 +43,7 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 		returnBody    []byte
 	)
 
-	w.Header().Set(contentType, applicationJSON)
+	w.Header().Set(contentType, ctApplicationJSON)
 
 	defer func() {
 		if len(returnBody) == 0 {
@@ -61,7 +62,7 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 	}()
 
 	switch r.Header.Get(contentType) {
-	case applicationJSON:
+	case ctApplicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
@@ -113,7 +114,7 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		returnBody    []byte
 	)
 
-	w.Header().Set(contentType, applicationJSON)
+	w.Header().Set(contentType, ctApplicationJSON)
 
 	defer func() {
 		if len(returnBody) == 0 {
@@ -132,7 +133,7 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 	}()
 
 	switch r.Header.Get(contentType) {
-	case applicationJSON:
+	case ctApplicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
@@ -174,6 +175,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set(contentType, ctTextHTML)
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
 }
