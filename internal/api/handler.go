@@ -126,7 +126,6 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 			default:
 				statusHeader = http.StatusBadRequest
 			}
-			return
 		}
 		w.WriteHeader(statusHeader)
 		_, _ = w.Write(returnBody)
@@ -181,7 +180,6 @@ func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
 
 func (t *DefaultHandler) midLogger(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(*r)
 		start := time.Now()
 		responseData := &responseData{
 			status: 0,
