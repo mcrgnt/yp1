@@ -11,6 +11,7 @@ type Metric interface {
 	Reset()
 	Type() string
 	String() string
+	Value() any
 }
 
 type NewMetricParams struct {
@@ -22,11 +23,11 @@ func NewMetric(params *NewMetricParams) (Metric, error) {
 	switch params.Type {
 	case common.TypeMetricGauge:
 		return NewGauge(&NewGaugeParams{
-			Value: params.Value,
+			Val: params.Value,
 		})
 	case common.TypeMetricCounter:
 		return NewCounter(&NewCounterParams{
-			Value: params.Value,
+			Val: params.Value,
 		})
 	}
 	return nil, fmt.Errorf("new metric: %w <%s>", common.ErrNotImplementedMetricType, params.Type)

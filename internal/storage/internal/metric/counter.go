@@ -8,11 +8,11 @@ import (
 )
 
 type Counter struct {
-	Value int64
+	Val int64
 }
 
 type NewCounterParams struct {
-	Value interface{}
+	Val interface{}
 }
 
 func fromAnyToInt64(value any) (int64, error) {
@@ -23,6 +23,8 @@ func fromAnyToInt64(value any) (int64, error) {
 		return int64(v), nil
 	case int64:
 		return v, nil
+	case *int64:
+		return *v, nil
 	case string:
 		_v, e := strconv.ParseInt(v, 10, 64)
 		if e != nil {
@@ -46,12 +48,12 @@ func fromAnyToInt64WithCheckForNegative(value any) (v int64, err error) {
 }
 
 func NewCounter(params *NewCounterParams) (counter *Counter, err error) {
-	value, err := fromAnyToInt64WithCheckForNegative(params.Value)
+	value, err := fromAnyToInt64WithCheckForNegative(params.Val)
 	if err != nil {
 		return nil, err
 	}
 	return &Counter{
-		Value: value,
+		Val: value,
 	}, nil
 }
 
@@ -60,12 +62,12 @@ func (t *Counter) Set(value any) (err error) {
 	if err != nil {
 		return
 	}
-	t.Value += newValue
+	t.Val += newValue
 	return
 }
 
 func (t *Counter) Reset() {
-	t.Value = 0
+	t.Val = 0
 }
 
 func (t *Counter) Type() string {
@@ -73,5 +75,9 @@ func (t *Counter) Type() string {
 }
 
 func (t *Counter) String() string {
-	return strconv.FormatInt(t.Value, 10)
+	return strconv.FormatInt(t.Val, 10)
+}
+
+func (t *Counter) Value() any {
+	return t.Val
 }

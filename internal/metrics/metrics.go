@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"runtime"
@@ -87,20 +88,25 @@ func ReportMetrics(params *ReportMetricsParams) {
 				Type: _type,
 				Name: name,
 			}
-			err = params.Storage.GetMetricString(storageParams)
+			err = params.Storage.GetMetric(storageParams)
 			if err != nil {
 				fmt.Println(err)
+				return
 			}
-			err = reporter.Report(&reporter.ReportParams{
-				URL: fmt.Sprintf("http://%s/update/%s/%s/%v",
-					params.Address,
-					storageParams.Type,
-					storageParams.Name,
-					storageParams.String,
-				),
-			})
-			if err != nil {
+			if bb, err := json.Marshal(storageParams); err != nil {
 				fmt.Println(err)
+				return
+			} else {
+				err = reporter.Report(&reporter.ReportParams{
+					URL: fmt.Sprintf("http://%s/update/",
+						params.Address,
+					),
+					Body: bb,
+				})
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 			}
 		}
 	}

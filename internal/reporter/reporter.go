@@ -1,6 +1,7 @@
 package reporter
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,11 +10,12 @@ import (
 type Reporter struct{}
 
 type ReportParams struct {
-	URL string
+	URL  string
+	Body []byte
 }
 
 func (t *Reporter) report(params *ReportParams) (response string, err error) {
-	resp, err := http.Post(params.URL, "text/plain", nil)
+	resp, err := http.Post(params.URL, "application/json", bytes.NewReader(params.Body))
 	if err != nil {
 		err = fmt.Errorf("report response: %w", err)
 		return

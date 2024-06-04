@@ -19,28 +19,28 @@ func TestGuageCounter(t *testing.T) {
 	}{
 		{
 			name:                "test_a",
-			params:              &NewGaugeParams{Value: "0"},
+			params:              &NewGaugeParams{Val: "0"},
 			expectedType:        common.TypeMetricGauge,
 			expectedString:      "0",
 			expectedResetString: "0",
 		},
 		{
 			name:                "test_a",
-			params:              &NewGaugeParams{Value: "10"},
+			params:              &NewGaugeParams{Val: "10"},
 			expectedType:        common.TypeMetricGauge,
 			expectedString:      "10",
 			expectedResetString: "0",
 		},
 		{
 			name:                "test_b",
-			params:              &NewCounterParams{Value: "0"},
+			params:              &NewCounterParams{Val: "0"},
 			expectedType:        common.TypeMetricCounter,
 			expectedString:      "0",
 			expectedResetString: "0",
 		},
 		{
 			name:                "test_b",
-			params:              &NewCounterParams{Value: "10"},
+			params:              &NewCounterParams{Val: "10"},
 			expectedType:        common.TypeMetricCounter,
 			expectedString:      "10",
 			expectedResetString: "0",
