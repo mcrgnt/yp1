@@ -20,7 +20,7 @@ func (t *Reporter) report(params *ReportParams) (string, error) {
 	if buf, err := gzip.Compress(params.Body); err != nil {
 		return "", fmt.Errorf("compress failed: %w", err)
 	} else {
-		if req, err := http.NewRequest("POST", params.URL, buf); err != nil {
+		if req, err := http.NewRequest(http.MethodPost, params.URL, buf); err != nil {
 			return "", fmt.Errorf("new request failed: %w", err)
 		} else {
 			req.Header.Set(common.ContentType, common.ApplicationJSON)

@@ -93,7 +93,7 @@ func ReportMetrics(params *ReportMetricsParams) {
 				fmt.Println(err)
 				return
 			}
-			if bb, err := json.Marshal(storageParams); err != nil {
+			if data, err := json.Marshal(storageParams); err != nil {
 				fmt.Println(err)
 				return
 			} else {
@@ -101,7 +101,7 @@ func ReportMetrics(params *ReportMetricsParams) {
 					URL: fmt.Sprintf("http://%s/update/",
 						params.Address,
 					),
-					Body: bb,
+					Body: data,
 				})
 				if err != nil {
 					fmt.Println(err)

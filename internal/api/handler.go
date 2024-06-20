@@ -1,14 +1,14 @@
 package api
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"net/http"
-	"time"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/compress/gzip"
 	"github.com/mcrgnt/yp1/internal/storage"
 	"github.com/rs/zerolog"
 )
@@ -17,14 +17,6 @@ var (
 	htmlHeader = `<!DOCTYPE html><html><head><title>Metrics</title></head><body>`
 	htmlFooter = `</body></html>`
 )
-
-// func checkContentEncodingGZIP(r *http.Request) bool {
-// 	return strings.Contains(r.Header.Get(common.ContentEncoding), strings.ToLower(common.GZip))
-// }
-
-// func checkAcceptEncodingGZIP(r *http.Request) bool {
-// 	return strings.Contains(r.Header.Get(common.AcceptEncoding), strings.ToLower(common.GZip))
-// }
 
 type DefaultHandler struct {
 	storage storage.Storage
@@ -37,173 +29,6 @@ type NewDefaultHandlerParams struct {
 	Logger  *zerolog.Logger
 }
 
-func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	var (
-		err           error
-		statusHeader  = http.StatusOK
-		storageParams = &storage.StorageParams{}
-		returnBody    []byte
-	)
-
-	w.Header().Set(common.ContentType, common.ApplicationJSON)
-
-	defer func() {
-		if len(returnBody) == 0 {
-			err = common.ErrMetricNotFound
-		}
-		if err != nil {
-			switch {
-			case errors.Is(err, common.ErrEmptyMetricName):
-				statusHeader = http.StatusNotFound
-			default:
-				statusHeader = http.StatusBadRequest
-			}
-		}
-		w.WriteHeader(statusHeader)
-		_, _ = w.Write(returnBody)
-	}()
-
-	switch r.Header.Get(common.ContentType) {
-	case common.ApplicationJSON:
-		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
-			return
-		}
-		err = t.storage.GetMetricString(storageParams)
-	default:
-		err = errors.New("not found")
-		return
-	}
-
-	if err = t.storage.MetricSet(storageParams); err != nil {
-		return
-	}
-	if err = t.storage.GetMetricString(storageParams); err != nil {
-		return
-	}
-	returnBody, err = json.Marshal(storageParams)
-}
-
-func (t *DefaultHandler) handlerUpdate(w http.ResponseWriter, r *http.Request) {
-	var (
-		err          error
-		statusHeader = http.StatusOK
-	)
-
-	defer func() {
-		if err != nil {
-			switch {
-			case errors.Is(err, common.ErrEmptyMetricName):
-				statusHeader = http.StatusNotFound
-			default:
-				statusHeader = http.StatusBadRequest
-			}
-		}
-		w.WriteHeader(statusHeader)
-	}()
-	storageParams := &storage.StorageParams{
-		Type:  chi.URLParam(r, "type"),
-		Name:  chi.URLParam(r, "name"),
-		Value: chi.URLParam(r, "value"),
-	}
-	err = t.storage.MetricSet(storageParams)
-}
-
-func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request) {
-	var (
-		err           error
-		statusHeader  = http.StatusOK
-		storageParams = &storage.StorageParams{}
-		returnBody    []byte
-	)
-
-	w.Header().Set(common.ContentType, common.ApplicationJSON)
-
-	defer func() {
-		if len(returnBody) == 0 {
-			err = common.ErrMetricNotFound
-		}
-		if err != nil {
-			switch {
-			case errors.Is(err, common.ErrMetricNotFound):
-				statusHeader = http.StatusNotFound
-			default:
-				statusHeader = http.StatusBadRequest
-			}
-		}
-		w.WriteHeader(statusHeader)
-		_, _ = w.Write(returnBody)
-	}()
-
-	switch r.Header.Get(common.ContentType) {
-	case common.ApplicationJSON:
-		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
-			return
-		}
-		err = t.storage.GetMetric(storageParams)
-	default:
-		err = errors.New("not found")
-		return
-	}
-
-	returnBody, err = json.Marshal(storageParams)
-}
-
-func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
-	var (
-		err          error
-		statusHeader = http.StatusOK
-	)
-
-	defer func() {
-		w.WriteHeader(statusHeader)
-	}()
-
-	storageParams := &storage.StorageParams{
-		Type: chi.URLParam(r, "type"),
-		Name: chi.URLParam(r, "name"),
-	}
-
-	err = t.storage.GetMetricString(storageParams)
-	if err != nil {
-		switch {
-		case errors.Is(err, common.ErrMetricNotFound):
-			statusHeader = http.StatusNotFound
-		default:
-			statusHeader = http.StatusBadRequest
-		}
-		return
-	}
-	_, _ = fmt.Fprint(w, storageParams.String)
-}
-
-func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set(common.ContentType, common.TextHTML)
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
-}
-
-func (t *DefaultHandler) midLogger(h http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		responseData := &responseData{
-			status: 0,
-			size:   0,
-		}
-		lw := &loggingResponseWriter{
-			ResponseWriter: w,
-			responseData:   responseData,
-		}
-		h.ServeHTTP(lw, r)
-
-		t.logger.Info().Msgf("url (%s) method (%s) status (%d) duration (%v) size (%d)",
-			r.RequestURI,
-			r.Method,
-			responseData.status,
-			time.Since(start),
-			responseData.size)
-	})
-}
-
 func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {
 	handler = &DefaultHandler{
 		storage: params.Storage,
@@ -211,11 +36,42 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 		logger:  params.Logger,
 	}
 
-	handler.R.Post("/update/{type}/{name}/{value}", handler.midLogger(handler.handlerUpdate))
-	handler.R.Post("/update/{type}/", handler.midLogger(handler.handlerUpdate))
-	handler.R.Post("/update/", handler.midLogger(handler.handlerUpdateJSON))
-	handler.R.Post("/value/", handler.midLogger(handler.handlerValueJSON))
-	handler.R.Get("/value/{type}/{name}", handler.midLogger(handler.handlerValue))
-	handler.R.Get("/", handler.midLogger(handler.handlerRoot))
+	handler.R.Group(func(r chi.Router) {
+		// r.Use(handler.middlewareLogger)
+		r.Use(middleware.Logger)
+		r.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
+	})
+	handler.R.Group(func(r chi.Router) {
+		r.Use(middleware.Logger)
+		r.Post("/update/{type}/", handler.handlerUpdate)
+	})
+	handler.R.Group(func(r chi.Router) {
+		r.Use(middleware.Logger, middleware.Compress(common.CompressLevel, common.ContentTypeToCompressList...))
+		r.Post("/update/", handler.handlerUpdateJSON)
+	})
+	handler.R.Group(func(r chi.Router) {
+		r.Use(middleware.Logger, middleware.Compress(common.CompressLevel, common.ContentTypeToCompressList...))
+		r.Post("/value/", handler.handlerValueJSON)
+	})
+	handler.R.Group(func(r chi.Router) {
+		r.Use(middleware.Logger)
+		r.Get("/value/{type}/{name}", handler.handlerValue)
+	})
+	handler.R.Group(func(r chi.Router) {
+		r.Use(middleware.Logger, middleware.Compress(common.CompressLevel, common.ContentTypeToCompressList...))
+		r.Get("/", handler.handlerRoot)
+	})
 	return
+}
+
+func (t *DefaultHandler) CheckCompress(r *http.Request) (io.Reader, error) {
+	if common.CheckContentEncodingGZIP(r) {
+		if b, err := gzip.Decompress(r.Body); err != nil {
+			return nil, fmt.Errorf("decompress failed: %w", err)
+		} else {
+			return b, nil
+		}
+	} else {
+		return r.Body, nil
+	}
 }
