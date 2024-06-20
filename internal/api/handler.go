@@ -13,16 +13,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const (
-	contentType       = "Content-Type"
-	ctApplicationJSON = "application/json"
-	ctTextHTML        = "text/html"
-)
-
 var (
 	htmlHeader = `<!DOCTYPE html><html><head><title>Metrics</title></head><body>`
 	htmlFooter = `</body></html>`
 )
+
+// func checkContentEncodingGZIP(r *http.Request) bool {
+// 	return strings.Contains(r.Header.Get(common.ContentEncoding), strings.ToLower(common.GZip))
+// }
+
+// func checkAcceptEncodingGZIP(r *http.Request) bool {
+// 	return strings.Contains(r.Header.Get(common.AcceptEncoding), strings.ToLower(common.GZip))
+// }
 
 type DefaultHandler struct {
 	storage storage.Storage
@@ -43,7 +45,7 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 		returnBody    []byte
 	)
 
-	w.Header().Set(contentType, ctApplicationJSON)
+	w.Header().Set(common.ContentType, common.ApplicationJSON)
 
 	defer func() {
 		if len(returnBody) == 0 {
@@ -61,8 +63,8 @@ func (t *DefaultHandler) handlerUpdateJSON(w http.ResponseWriter, r *http.Reques
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get(contentType) {
-	case ctApplicationJSON:
+	switch r.Header.Get(common.ContentType) {
+	case common.ApplicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
@@ -114,7 +116,7 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		returnBody    []byte
 	)
 
-	w.Header().Set(contentType, ctApplicationJSON)
+	w.Header().Set(common.ContentType, common.ApplicationJSON)
 
 	defer func() {
 		if len(returnBody) == 0 {
@@ -132,8 +134,8 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get(contentType) {
-	case ctApplicationJSON:
+	switch r.Header.Get(common.ContentType) {
+	case common.ApplicationJSON:
 		if err = json.NewDecoder(r.Body).Decode(storageParams); err != nil {
 			return
 		}
@@ -175,7 +177,7 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *DefaultHandler) handlerRoot(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set(contentType, ctTextHTML)
+	w.Header().Set(common.ContentType, common.TextHTML)
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(htmlHeader + t.storage.GetMetricAll() + htmlFooter))
 }
@@ -215,6 +217,5 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 	handler.R.Post("/value/", handler.midLogger(handler.handlerValueJSON))
 	handler.R.Get("/value/{type}/{name}", handler.midLogger(handler.handlerValue))
 	handler.R.Get("/", handler.midLogger(handler.handlerRoot))
-
 	return
 }

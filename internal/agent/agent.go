@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mcrgnt/yp1/internal/agent/config"
+	"github.com/mcrgnt/yp1/internal/agent/internal/config"
 	"github.com/mcrgnt/yp1/internal/metrics"
 	"github.com/mcrgnt/yp1/internal/storage"
 )

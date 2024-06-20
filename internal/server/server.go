@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/mcrgnt/yp1/internal/api"
-	"github.com/mcrgnt/yp1/internal/server/config"
+	"github.com/mcrgnt/yp1/internal/server/internal/config"
 	"github.com/mcrgnt/yp1/internal/storage"
 	"github.com/rs/zerolog"
 )

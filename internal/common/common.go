@@ -7,6 +7,16 @@ const (
 	TypeMetricCounter = "counter"
 )
 
+const (
+	ContentType     = "Content-Type"
+	ContentEncoding = "Content-Encoding"
+	AcceptEncoding  = "Accept-Encoding"
+
+	ApplicationJSON = "application/json"
+	TextHTML        = "text/html"
+	GZip            = "gzip"
+)
+
 var (
 	ErrNotImplementedMetricType    = errors.New("not implemented metric type")
 	ErrIncompatibleMetricValueType = errors.New("incompatible metric value type")
