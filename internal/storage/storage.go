@@ -20,6 +20,8 @@ type Storage interface {
 	GetMetricString(*StorageParams) error
 	GetMetric(*StorageParams) error
 	GetMetricAll() string
+	SetAllJSON([]byte) error
+	GetAllJSON() ([]byte, error)
 }
 
 type NewMemStorageParams struct {

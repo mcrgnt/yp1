@@ -4,6 +4,10 @@ GOLANGCI_LINT_CACHE?=/tmp/praktikum-golangci-lint-cache
 fieldalignment:
 	-@find . -type d -not -name ".*"|while read path; do if [ `find $$path -maxdepth 1 -name *.go|wc -l` -gt 0 ]; then fieldalignment -fix `find $$path -maxdepth 1 -name *.go`; fi; done
 
+.PHONY: formattag
+formattag:
+	-@find . -name "*.go" -type f -exec formattag -file {} \;
+
 
 .PHONY: golangci-lint-run
 golangci-lint-run: _golangci-lint-rm-unformatted-report

@@ -5,40 +5,51 @@ import (
 	"fmt"
 
 	"github.com/mcrgnt/yp1/internal/api"
+	"github.com/mcrgnt/yp1/internal/filer"
 	"github.com/mcrgnt/yp1/internal/server/internal/config"
 	"github.com/mcrgnt/yp1/internal/storage"
 	"github.com/rs/zerolog"
 )
 
 type Server struct {
-	api     *api.API
-	address string
+	cfg   *config.Config
+	api   *api.API
+	filer *filer.Filer
 }
 
 type NewServerParams struct {
 	Logger *zerolog.Logger
 }
 
-func NewServer(params *NewServerParams) (server *Server, err error) {
-	server = &Server{}
-	cfg, err := config.NewConfig()
-	if err != nil {
-		return
+func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, error) {
+	server := &Server{}
+	if cfg, err := config.NewConfig(); err != nil {
+		return nil, err
+	} else {
+		server.cfg = cfg
+		strg := storage.NewStorage(&storage.NewMemStorageParams{
+			Type: server.cfg.StorageType,
+		})
+		server.api = api.NewAPI(&api.NewAPIParams{
+			Address: server.cfg.Address,
+			Storage: strg,
+			Logger:  params.Logger,
+		})
+		server.filer = filer.NewFilerContext(ctx, &filer.NewFilerParams{
+			FilePath:      server.cfg.FileStoragePath,
+			Logger:        params.Logger,
+			WriteInterval: server.cfg.Parsed.StoreInterval,
+			Storage:       strg,
+		})
 	}
-
-	server.address = cfg.Address
-	server.api = api.NewAPI(&api.NewAPIParams{
-		Address: cfg.Address,
-		Storage: storage.NewStorage(&storage.NewMemStorageParams{
-			Type: cfg.StorageType,
-		}),
-		Logger: params.Logger,
-	})
-
-	return
+	return server, nil
 }
 
 func (t *Server) Run(ctx context.Context) (chan struct{}, error) {
+	if t.cfg.Restore && t.cfg.FileStoragePath != "" {
+		t.filer.Read()
+	}
+
 	graseful := make(chan struct{})
 
 	go func() {
@@ -55,5 +66,8 @@ func (t *Server) Run(ctx context.Context) (chan struct{}, error) {
 
 func (t *Server) shutdown(ctx context.Context, graseful chan struct{}) {
 	t.api.Shutdown(ctx)
+	if t.cfg.FileStoragePath != "" {
+		t.filer.Write()
+	}
 	close(graseful)
 }

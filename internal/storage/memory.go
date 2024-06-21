@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -103,4 +104,46 @@ func (t *MemStorage) GetMetricAll() (data string) {
 	}
 	t.mu.Unlock()
 	return
+}
+
+func (t *MemStorage) SetAllJSON(data []byte) error {
+	t.mu.Lock()
+	defer func() {
+		t.mu.Unlock()
+	}()
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshal failed: %w", err)
+	}
+	return nil
+}
+
+func (t *MemStorage) GetAllJSON() ([]byte, error) {
+	t.mu.Lock()
+	defer func() {
+		t.mu.Unlock()
+	}()
+	if data, err := json.Marshal(t); err != nil {
+		return nil, fmt.Errorf("marshal failed: %w", err)
+	} else {
+		return data, nil
+	}
+}
+
+type marshaler struct {
+	Name  string
+	Type  string
+	Value interface{}
+}
+
+func (t *MemStorage) UnmarshalJSON(data []byte) error {
+	fmt.Println(">>> UnmarshalJSON", t)
+	return nil
+}
+
+func (t *MemStorage) MarshalJSON() ([]byte, error) {
+	fmt.Println(">>> MarshalJSON", t)
+	for k, v := range t.Metrics {
+		fmt.Println(k, v.Type(), v.Value())
+	}
+	return []byte(`{}`), nil
 }

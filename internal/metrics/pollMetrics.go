@@ -4,278 +4,278 @@ package metrics
 import (
 	"fmt"
 
-	"github.com/mcrgnt/yp1/internal/storage"
 	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/storage"
 )
 
 func pollMetrics(params *PollMetricsParams) {
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "Alloc",
+			Type:  common.TypeMetricGauge,
+			Name:  "Alloc",
 			Value: float64(MemStats.Alloc),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "BuckHashSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "BuckHashSys",
 			Value: float64(MemStats.BuckHashSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "Frees",
+			Type:  common.TypeMetricGauge,
+			Name:  "Frees",
 			Value: float64(MemStats.Frees),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "GCCPUFraction",
+			Type:  common.TypeMetricGauge,
+			Name:  "GCCPUFraction",
 			Value: MemStats.GCCPUFraction,
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "GCSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "GCSys",
 			Value: float64(MemStats.GCSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapAlloc",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapAlloc",
 			Value: float64(MemStats.HeapAlloc),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapIdle",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapIdle",
 			Value: float64(MemStats.HeapIdle),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapInuse",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapInuse",
 			Value: float64(MemStats.HeapInuse),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapObjects",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapObjects",
 			Value: float64(MemStats.HeapObjects),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapReleased",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapReleased",
 			Value: float64(MemStats.HeapReleased),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "HeapSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "HeapSys",
 			Value: float64(MemStats.HeapSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "LastGC",
+			Type:  common.TypeMetricGauge,
+			Name:  "LastGC",
 			Value: float64(MemStats.LastGC),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "Lookups",
+			Type:  common.TypeMetricGauge,
+			Name:  "Lookups",
 			Value: float64(MemStats.Lookups),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "MCacheInuse",
+			Type:  common.TypeMetricGauge,
+			Name:  "MCacheInuse",
 			Value: float64(MemStats.MCacheInuse),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "MCacheSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "MCacheSys",
 			Value: float64(MemStats.MCacheSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "MSpanInuse",
+			Type:  common.TypeMetricGauge,
+			Name:  "MSpanInuse",
 			Value: float64(MemStats.MSpanInuse),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "MSpanSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "MSpanSys",
 			Value: float64(MemStats.MSpanSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "Mallocs",
+			Type:  common.TypeMetricGauge,
+			Name:  "Mallocs",
 			Value: float64(MemStats.Mallocs),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "NextGC",
+			Type:  common.TypeMetricGauge,
+			Name:  "NextGC",
 			Value: float64(MemStats.NextGC),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "NumForcedGC",
+			Type:  common.TypeMetricGauge,
+			Name:  "NumForcedGC",
 			Value: float64(MemStats.NumForcedGC),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "NumGC",
+			Type:  common.TypeMetricGauge,
+			Name:  "NumGC",
 			Value: float64(MemStats.NumGC),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "OtherSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "OtherSys",
 			Value: float64(MemStats.OtherSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "PauseTotalNs",
+			Type:  common.TypeMetricGauge,
+			Name:  "PauseTotalNs",
 			Value: float64(MemStats.PauseTotalNs),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "StackInuse",
+			Type:  common.TypeMetricGauge,
+			Name:  "StackInuse",
 			Value: float64(MemStats.StackInuse),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "StackSys",
+			Type:  common.TypeMetricGauge,
+			Name:  "StackSys",
 			Value: float64(MemStats.StackSys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "Sys",
+			Type:  common.TypeMetricGauge,
+			Name:  "Sys",
 			Value: float64(MemStats.Sys),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}
 	{
 		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
-			Name: "TotalAlloc",
+			Type:  common.TypeMetricGauge,
+			Name:  "TotalAlloc",
 			Value: float64(MemStats.TotalAlloc),
 		})
-		if err !=nil {
+		if err != nil {
 			fmt.Println(err)
 		}
 	}

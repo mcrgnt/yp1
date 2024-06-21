@@ -15,7 +15,7 @@ func main() {
 	log := zerolog.New(zerolog.SyncWriter(os.Stdout)).Level(zerolog.DebugLevel)
 
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	srv, err := server.NewServer(&server.NewServerParams{
+	srv, err := server.NewServerContext(ctx, &server.NewServerParams{
 		Logger: &log,
 	})
 	if err != nil {
