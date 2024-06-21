@@ -199,9 +199,9 @@ func TestMemStorage_MetricSetCounterErr(t *testing.T) {
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
 			Name: "test", Value: int64(-1)}, expectedErr: common.ErrIncompatibleMetricValue},
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
-			Name: "test", Value: float64(-1)}, expectedErr: common.ErrIncompatibleMetricValueType},
+			Name: "test", Value: float64(-1)}, expectedErr: common.ErrIncompatibleMetricValue},
 		{name: "test_a", params: &StorageParams{Type: common.TypeMetricCounter,
-			Name: "test", Value: float64(-1.00001)}, expectedErr: common.ErrIncompatibleMetricValueType},
+			Name: "test", Value: float64(-1.00001)}, expectedErr: common.ErrIncompatibleMetricValue},
 
 		{name: "test_b", params: &StorageParams{Type: common.TypeMetricCounter,
 			Name: "test", Value: ""}, expectedErr: strconv.ErrSyntax},
