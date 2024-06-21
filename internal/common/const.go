@@ -18,3 +18,7 @@ const (
 const (
 	CopyBytes = 1024
 )
+
+const (
+	FilePermissions = 0o644
+)

@@ -13,12 +13,12 @@ type ConfigPrased struct {
 }
 
 type Config struct {
+	Parsed          *ConfigPrased
 	Address         string `env:"ADDRESS"`
 	StorageType     string `env:"MEMORY"`
 	StoreInterval   string `env:"STORE_INTERVAL"`
 	FileStoragePath string `env:"FILE_STORAGE_PATH"`
 	Restore         bool   `env:"RESTORE"`
-	Parsed          *ConfigPrased
 }
 
 func (t *Config) paramsParseEnv() error {

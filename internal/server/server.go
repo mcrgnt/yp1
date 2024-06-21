@@ -24,7 +24,7 @@ type NewServerParams struct {
 func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, error) {
 	server := &Server{}
 	if cfg, err := config.NewConfig(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("new server context failed: %w", err)
 	} else {
 		server.cfg = cfg
 		strg := storage.NewStorage(&storage.NewMemStorageParams{

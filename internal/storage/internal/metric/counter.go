@@ -8,8 +8,8 @@ import (
 )
 
 type Counter struct {
-	val  int64
 	name string
+	val  int64
 }
 
 type NewCounterParams struct {

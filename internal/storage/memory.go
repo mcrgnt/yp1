@@ -11,8 +11,8 @@ import (
 
 type MemStorage struct {
 	Metrics map[string]metric.Metric
-	mu      sync.Mutex
 	emitter chan struct{}
+	mu      sync.Mutex
 }
 
 func NewMemStorage() *MemStorage {
@@ -42,7 +42,7 @@ func (t *MemStorage) metricSetNoLock(params *StorageParams) error {
 	}
 	if t.isMetricExists(params) {
 		if err := t.Metrics[params.Type+params.Name].Set(params.Value); err != nil {
-			return err
+			return fmt.Errorf("set failed: %w", err)
 		}
 	} else {
 		if newMetric, err := metric.NewMetric(&metric.NewMetricParams{
@@ -50,7 +50,7 @@ func (t *MemStorage) metricSetNoLock(params *StorageParams) error {
 			Value: params.Value,
 			Name:  params.Name,
 		}); err != nil {
-			return err
+			return fmt.Errorf("new metric failed: %w", err)
 		} else {
 			t.Metrics[params.Type+params.Name] = newMetric
 		}
@@ -140,9 +140,9 @@ func (t *MemStorage) GetAllJSON() ([]byte, error) {
 }
 
 type memStorageMarshaler struct {
-	Name  string
-	Type  string
-	Value interface{}
+	Value interface{} `json:"value"`
+	Name  string      `json:"name"`
+	Type  string      `json:"type"`
 }
 
 func (t *MemStorage) UnmarshalJSON(data []byte) error {

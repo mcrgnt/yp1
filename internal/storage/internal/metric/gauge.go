@@ -8,8 +8,8 @@ import (
 )
 
 type Gauge struct {
-	val  float64
 	name string
+	val  float64
 }
 
 type NewGaugeParams struct {
