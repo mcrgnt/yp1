@@ -2,7 +2,6 @@ package filer
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -34,10 +33,18 @@ func NewFilerContext(ctx context.Context, params *NewFilerParams) *Filer {
 }
 
 func (t *Filer) periodicWriteContext(ctx context.Context, duration time.Duration) {
-	tick := time.NewTicker(duration)
 	if duration.Seconds() == 0 {
-		return
+		emitter := t.storage.Emitter()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-emitter:
+				t.Write()
+			}
+		}
 	} else {
+		tick := time.NewTicker(duration)
 		for {
 			select {
 			case <-ctx.Done():
@@ -61,11 +68,9 @@ func (t *Filer) Read() {
 }
 
 func (t *Filer) Write() {
-	fmt.Println("write")
 	if data, err := t.storage.GetAllJSON(); err != nil {
 		t.logger.Error().Msgf("get all json failed: %s", err)
 	} else {
-		fmt.Println("write", string(data))
 		if err := os.WriteFile(t.filePath, data, 0o755); err != nil {
 			t.logger.Error().Msgf("write file failed: %s", err)
 		}

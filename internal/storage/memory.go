@@ -12,6 +12,7 @@ import (
 type MemStorage struct {
 	Metrics map[string]metric.Metric
 	mu      sync.Mutex
+	emitter chan struct{}
 }
 
 func NewMemStorage() *MemStorage {
@@ -32,34 +33,43 @@ func (t *MemStorage) isMetricExists(params *StorageParams) (exists bool) {
 	return
 }
 
-func (t *MemStorage) MetricSet(params *StorageParams) (err error) {
+func (t *MemStorage) metricSetNoLock(params *StorageParams) error {
 	if params.Name == "" {
-		return fmt.Errorf("metric set: %w", common.ErrEmptyMetricName)
+		return fmt.Errorf("metric set failed: %w", common.ErrEmptyMetricName)
 	}
-
 	if params.Type != common.TypeMetricCounter && params.Type != common.TypeMetricGauge {
-		return fmt.Errorf("metric set: %w <%s>", common.ErrNotImplementedMetricType, params.Type)
+		return fmt.Errorf("metric set failed: %w <%s>", common.ErrNotImplementedMetricType, params.Type)
 	}
+	if t.isMetricExists(params) {
+		if err := t.Metrics[params.Type+params.Name].Set(params.Value); err != nil {
+			return err
+		}
+	} else {
+		if newMetric, err := metric.NewMetric(&metric.NewMetricParams{
+			Type:  params.Type,
+			Value: params.Value,
+			Name:  params.Name,
+		}); err != nil {
+			return err
+		} else {
+			t.Metrics[params.Type+params.Name] = newMetric
+		}
+	}
+	return nil
+}
 
+func (t *MemStorage) MetricSet(params *StorageParams) error {
 	t.mu.Lock()
 	defer func() {
 		t.mu.Unlock()
 	}()
-
-	if t.isMetricExists(params) {
-		err = t.Metrics[params.Type+params.Name].Set(params.Value)
-	} else {
-		var newMetric metric.Metric
-		newMetric, err = metric.NewMetric(&metric.NewMetricParams{
-			Type:  params.Type,
-			Value: params.Value,
-		})
-		if err != nil {
-			return
-		}
-		t.Metrics[params.Type+params.Name] = newMetric
+	if err := t.metricSetNoLock(params); err != nil {
+		return fmt.Errorf("metric set failed: %w", err)
 	}
-	return
+	if t.emitter != nil {
+		t.emitter <- struct{}{}
+	}
+	return nil
 }
 
 func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
@@ -99,8 +109,8 @@ func (t *MemStorage) GetMetric(params *StorageParams) (err error) {
 
 func (t *MemStorage) GetMetricAll() (data string) {
 	t.mu.Lock()
-	for name, metric := range t.Metrics {
-		data += name + ": " + metric.String() + "\r\n"
+	for _, metric := range t.Metrics {
+		data += metric.Name() + ": " + metric.String() + "\r\n"
 	}
 	t.mu.Unlock()
 	return
@@ -129,21 +139,47 @@ func (t *MemStorage) GetAllJSON() ([]byte, error) {
 	}
 }
 
-type marshaler struct {
+type memStorageMarshaler struct {
 	Name  string
 	Type  string
 	Value interface{}
 }
 
 func (t *MemStorage) UnmarshalJSON(data []byte) error {
-	fmt.Println(">>> UnmarshalJSON", t)
+	target := []*memStorageMarshaler{}
+	if err := json.Unmarshal(data, &target); err != nil {
+		return fmt.Errorf("unmarshal failed: %w", err)
+	} else {
+		for _, v := range target {
+			if err := t.metricSetNoLock(&StorageParams{
+				Value: v.Value,
+				Type:  v.Type,
+				Name:  v.Name,
+			}); err != nil {
+				return fmt.Errorf("metric set failed: %w", err)
+			}
+		}
+	}
 	return nil
 }
 
 func (t *MemStorage) MarshalJSON() ([]byte, error) {
-	fmt.Println(">>> MarshalJSON", t)
-	for k, v := range t.Metrics {
-		fmt.Println(k, v.Type(), v.Value())
+	target := []*memStorageMarshaler{}
+	for _, v := range t.Metrics {
+		target = append(target, &memStorageMarshaler{
+			Name:  v.Name(),
+			Type:  v.Type(),
+			Value: v.Value(),
+		})
 	}
-	return []byte(`{}`), nil
+	if data, err := json.Marshal(&target); err != nil {
+		return nil, fmt.Errorf("marshal failed: %w", err)
+	} else {
+		return data, nil
+	}
+}
+
+func (t *MemStorage) Emitter() chan struct{} {
+	t.emitter = make(chan struct{})
+	return t.emitter
 }

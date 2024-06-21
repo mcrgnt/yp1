@@ -18,11 +18,11 @@ func TestNewMetric(t *testing.T) {
 		{
 			name:     "test_",
 			params:   &NewMetricParams{Type: common.TypeMetricGauge, Value: float64(1)},
-			expected: &Gauge{Val: 1}},
+			expected: &Gauge{val: 1}},
 		{
 			name:     "test_",
 			params:   &NewMetricParams{Type: common.TypeMetricCounter, Value: int64(1)},
-			expected: &Counter{Val: 1}},
+			expected: &Counter{val: 1}},
 		{
 			name:        "test_",
 			params:      &NewMetricParams{Type: "", Value: int64(1)},

@@ -22,6 +22,7 @@ type Storage interface {
 	GetMetricAll() string
 	SetAllJSON([]byte) error
 	GetAllJSON() ([]byte, error)
+	Emitter() chan struct{}
 }
 
 type NewMemStorageParams struct {

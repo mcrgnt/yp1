@@ -8,11 +8,13 @@ import (
 )
 
 type Gauge struct {
-	Val float64
+	val  float64
+	name string
 }
 
 type NewGaugeParams struct {
-	Val interface{}
+	Val  interface{}
+	Name string
 }
 
 func fromAnyToFloat64(value any) (float64, error) {
@@ -42,7 +44,8 @@ func NewGauge(params *NewGaugeParams) (*Gauge, error) {
 		return nil, err
 	}
 	return &Gauge{
-		Val: value,
+		val:  value,
+		name: params.Name,
 	}, nil
 }
 
@@ -51,12 +54,12 @@ func (t *Gauge) Set(value any) (err error) {
 	if err != nil {
 		return
 	}
-	t.Val = v
+	t.val = v
 	return
 }
 
 func (t *Gauge) Reset() {
-	t.Val = 0
+	t.val = 0
 }
 
 func (t *Gauge) Type() string {
@@ -64,9 +67,13 @@ func (t *Gauge) Type() string {
 }
 
 func (t *Gauge) String() string {
-	return strconv.FormatFloat(t.Val, 'f', -1, 64)
+	return strconv.FormatFloat(t.val, 'f', -1, 64)
 }
 
 func (t *Gauge) Value() any {
-	return t.Val
+	return t.val
+}
+
+func (t *Gauge) Name() string {
+	return t.name
 }
