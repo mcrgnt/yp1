@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mcrgnt/yp1/internal/api"
+	"github.com/mcrgnt/yp1/internal/agent/api"
 	"github.com/mcrgnt/yp1/internal/filer"
 	"github.com/mcrgnt/yp1/internal/server/internal/config"
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/store"
 	"github.com/rs/zerolog"
 )
 
@@ -27,7 +27,7 @@ func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, er
 		return nil, fmt.Errorf("new server context failed: %w", err)
 	} else {
 		server.cfg = cfg
-		strg := storage.NewStorage(&storage.NewMemStorageParams{
+		strg := store.NewStorage(&store.NewStorageParams{
 			Type: server.cfg.StorageType,
 		})
 		server.api = api.NewAPI(&api.NewAPIParams{

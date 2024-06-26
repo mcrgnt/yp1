@@ -1,4 +1,4 @@
-package storage
+package models
 
 import (
 	"encoding/json"
@@ -6,13 +6,6 @@ import (
 
 	"github.com/mcrgnt/yp1/internal/models"
 )
-
-type StorageParams struct {
-	Value  any
-	String string
-	Type   string
-	Name   string
-}
 
 type Storage interface {
 	MetricSet(*StorageParams) error
@@ -25,18 +18,11 @@ type Storage interface {
 	Emitter() chan struct{}
 }
 
-type NewMemStorageParams struct {
-	Type string
-}
-
-func NewStorage(params *NewMemStorageParams) (storage Storage) {
-	switch params.Type {
-	case "memory":
-		storage = NewMemStorage()
-	default:
-		storage = NewMemStorage()
-	}
-	return
+type StorageParams struct {
+	Value  any    `json:"value"`
+	String string `json:"string"`
+	Type   string `json:"type"`
+	Name   string `json:"name"`
 }
 
 func (t *StorageParams) MarshalJSON() ([]byte, error) {

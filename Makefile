@@ -18,7 +18,7 @@ _golangci-lint-reports-mkdir:
 
 .PHONY: _golangci-lint-run
 _golangci-lint-run: _golangci-lint-reports-mkdir
-	-docker run --rm \
+		-docker run --rm \
     -v $(shell pwd):/app \
     -v $(GOLANGCI_LINT_CACHE):/root/.cache \
     -w /app \
@@ -41,8 +41,8 @@ golangci-lint-clean:
 
 .PHONY: server
 server:
-	cd cmd/server; go run .
+	go generate ./...; cd cmd/server; go run .
 
 .PHONY: agent
 agent:
-	cd cmd/agent; go run .
+	go generate ./...; cd cmd/agent; go run .

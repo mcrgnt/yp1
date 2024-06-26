@@ -7,7 +7,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/rs/zerolog"
+)
+
+const (
+	CopyBytes = 1024
 )
 
 func Compress(data []byte) (io.Reader, error) {
@@ -23,24 +27,29 @@ func Compress(data []byte) (io.Reader, error) {
 	return &buf, nil
 }
 
-func Decompress(r io.Reader) (io.Reader, error) {
-	if zr, err := gzip.NewReader(r); err != nil {
+type DecompressParams struct {
+	Reader io.Reader
+	Logger *zerolog.Logger
+}
+
+func Decompress(params *DecompressParams) (io.Reader, error) {
+	if gzipReader, err := gzip.NewReader(params.Reader); err != nil {
 		return nil, fmt.Errorf("new reader failed: %w", err)
 	} else {
 		defer func() {
-			if err := zr.Close(); err != nil {
-				fmt.Println(err)
+			if err := gzipReader.Close(); err != nil {
+				params.Logger.Error().Msg(err.Error())
 			}
 		}()
-		var b bytes.Buffer
 
+		var b bytes.Buffer
 		for {
-			_, err := io.CopyN(&b, zr, common.CopyBytes)
+			_, err := io.CopyN(&b, gzipReader, CopyBytes)
 			if err != nil {
 				if errors.Is(err, io.EOF) {
 					break
 				}
-				return nil, fmt.Errorf("copyn failed: %w", err)
+				return nil, fmt.Errorf("copy failed: %w", err)
 			}
 		}
 		return &b, nil

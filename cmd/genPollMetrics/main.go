@@ -15,24 +15,22 @@ var (
 package metrics
 
 import (
-	"fmt"
-
-	"github.com/mcrgnt/yp1/internal/storage"
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
-func pollMetrics(params *PollMetricsParams) {
+func pollMetrics(params *PollMetricsParams) error {
 {{range .}}	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "{{.Name}}",
 			Value: {{.Value}},
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err !=nil {
+			return err
 		}
 	}
-{{end}}}
+{{end}}
+	return nil
+}
 `))
 )
 

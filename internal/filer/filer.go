@@ -5,19 +5,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/mcrgnt/yp1/internal/common"
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/models"
 	"github.com/rs/zerolog"
 )
 
+const (
+	FilePermissions = 0o644
+)
+
 type Filer struct {
-	storage  storage.Storage
+	storage  models.Storage
 	logger   *zerolog.Logger
 	filePath string
 }
 
 type NewFilerParams struct {
-	Storage       storage.Storage
+	Storage       models.Storage
 	Logger        *zerolog.Logger
 	FilePath      string
 	WriteInterval time.Duration
@@ -72,7 +75,7 @@ func (t *Filer) Write() {
 	if data, err := t.storage.GetAllJSON(); err != nil {
 		t.logger.Error().Msgf("get all json failed: %s", err)
 	} else {
-		if err := os.WriteFile(t.filePath, data, common.FilePermissions); err != nil {
+		if err := os.WriteFile(t.filePath, data, FilePermissions); err != nil {
 			t.logger.Error().Msgf("write file failed: %s", err)
 		}
 	}

@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/models"
 	"github.com/rs/zerolog"
 )
 
 type API struct {
 	srv     *http.Server
-	storage storage.Storage
+	storage models.Storage
 }
 
 type NewAPIParams struct {
-	Storage storage.Storage
+	Storage models.Storage
 	Logger  *zerolog.Logger
 	Address string
 }

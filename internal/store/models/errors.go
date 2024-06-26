@@ -1,11 +1,6 @@
-package common
+package models
 
 import "errors"
-
-var (
-	CompressLevel             = 5
-	ContentTypeToCompressList = []string{"text/html", "application/json"}
-)
 
 var (
 	ErrNotImplementedMetricType    = errors.New("not implemented metric type")

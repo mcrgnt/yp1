@@ -1,10 +1,10 @@
-package metric
+package gauge
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
 type Gauge struct {
@@ -34,7 +34,7 @@ func fromAnyToFloat64(value any) (float64, error) {
 		}
 		return _v, nil
 	default:
-		return 0, fmt.Errorf("convert to float64: %w %T", common.ErrIncompatibleMetricValueType, value)
+		return 0, fmt.Errorf("convert to float64: %w %T", models.ErrIncompatibleMetricValueType, value)
 	}
 }
 
@@ -63,7 +63,7 @@ func (t *Gauge) Reset() {
 }
 
 func (t *Gauge) Type() string {
-	return common.TypeMetricGauge
+	return models.TypeMetricGauge
 }
 
 func (t *Gauge) String() string {

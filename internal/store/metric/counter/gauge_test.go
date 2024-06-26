@@ -1,10 +1,10 @@
-package metric
+package counter
 
 import (
 	"strconv"
 	"testing"
 
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,30 +18,16 @@ func TestGuageCounter(t *testing.T) {
 		name                string
 	}{
 		{
-			name:                "test_a",
-			params:              &NewGaugeParams{Val: "0"},
-			expectedType:        common.TypeMetricGauge,
-			expectedString:      "0",
-			expectedResetString: "0",
-		},
-		{
-			name:                "test_a",
-			params:              &NewGaugeParams{Val: "10"},
-			expectedType:        common.TypeMetricGauge,
-			expectedString:      "10",
-			expectedResetString: "0",
-		},
-		{
 			name:                "test_b",
 			params:              &NewCounterParams{Val: "0"},
-			expectedType:        common.TypeMetricCounter,
+			expectedType:        models.TypeMetricCounter,
 			expectedString:      "0",
 			expectedResetString: "0",
 		},
 		{
 			name:                "test_b",
 			params:              &NewCounterParams{Val: "10"},
-			expectedType:        common.TypeMetricCounter,
+			expectedType:        models.TypeMetricCounter,
 			expectedString:      "10",
 			expectedResetString: "0",
 		},
@@ -49,16 +35,7 @@ func TestGuageCounter(t *testing.T) {
 
 	for i, tt := range tests {
 		t.Run(tt.name+"_"+strconv.Itoa(i), func(t *testing.T) {
-			var (
-				actual    Metric
-				actualErr error
-			)
-			switch tt.expectedType {
-			case common.TypeMetricCounter:
-				actual, actualErr = NewCounter(tt.params.(*NewCounterParams))
-			default:
-				actual, actualErr = NewGauge(tt.params.(*NewGaugeParams))
-			}
+			actual, actualErr := NewCounter(tt.params.(*NewCounterParams))
 			assert.Equal(t, nil, actualErr)
 			assert.Equal(t, tt.expectedType, actual.Type())
 			assert.Equal(t, tt.expectedString, actual.String())

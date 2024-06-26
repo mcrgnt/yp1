@@ -1,9 +1,10 @@
 package metrics
 
 import (
+	"fmt"
 	"testing"
 
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/memory"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,15 +20,17 @@ func TestPollMetrics(t *testing.T) {
 			name: "test0",
 			args: args{
 				params: &PollMetricsParams{
-					Storage: storage.NewMemStorage(),
+					Storage: memory.NewMemoryStorage(),
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			PollMetrics(tt.args.params)
-			assert.NotEqual(t, storage.MemStorage{}, tt.args.params.Storage)
+			if err := PollMetrics(tt.args.params); err != nil {
+				fmt.Println(err)
+			}
+			assert.NotEqual(t, memory.MemoryStorage{}, tt.args.params.Storage)
 		})
 	}
 }

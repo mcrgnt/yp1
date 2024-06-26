@@ -6,12 +6,16 @@ import (
 	"math/rand"
 	"runtime"
 
-	"github.com/mcrgnt/yp1/internal/common"
 	"github.com/mcrgnt/yp1/internal/reporter"
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
 //go:generate go run ../../cmd/genPollMetrics/main.go
+
+const (
+	TypeMetricGauge   = "gauge"
+	TypeMetricCounter = "counter"
+)
 
 var (
 	MemStats                    = &runtime.MemStats{}
@@ -47,77 +51,67 @@ var (
 )
 
 type PollMetricsParams struct {
-	Storage storage.Storage
+	Storage models.Storage
 }
 
-func PollMetrics(params *PollMetricsParams) {
+func PollMetrics(params *PollMetricsParams) error {
 	runtime.ReadMemStats(MemStats)
-	pollMetrics(params)
-	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type:  common.TypeMetricGauge,
-			Name:  "RandomValue",
-			Value: rand.Float64(),
-		})
-		if err != nil {
-			fmt.Println(err)
-		}
+	if err := pollMetrics(params); err != nil {
+		return fmt.Errorf("poll metrics failed: %w", err)
 	}
-	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type:  common.TypeMetricCounter,
-			Name:  "PollCount",
-			Value: int64(1),
-		})
-		if err != nil {
-			fmt.Println(err)
-		}
+	if err := params.Storage.MetricSet(&models.StorageParams{
+		Type:  TypeMetricGauge,
+		Name:  "RandomValue",
+		Value: rand.Float64(),
+	}); err != nil {
+		return fmt.Errorf("metric set failed: %w", err)
 	}
+	if err := params.Storage.MetricSet(&models.StorageParams{
+		Type:  TypeMetricCounter,
+		Name:  "PollCount",
+		Value: int64(1),
+	}); err != nil {
+		return fmt.Errorf("metric set failed: %w", err)
+	}
+	return nil
 }
 
 type ReportMetricsParams struct {
-	Storage storage.Storage
+	Storage models.Storage
 	Address string
 }
 
-func ReportMetrics(params *ReportMetricsParams) {
+func ReportMetrics(params *ReportMetricsParams) error {
 	var err error
 	for _type, names := range metricsTypeNames {
 		for _, name := range names {
-			storageParams := &storage.StorageParams{
+			storageParams := &models.StorageParams{
 				Type: _type,
 				Name: name,
 			}
-			err = params.Storage.GetMetric(storageParams)
-			if err != nil {
-				fmt.Println(err)
-				return
+			if err = params.Storage.GetMetric(storageParams); err != nil {
+				return fmt.Errorf("get metric failed: %w", err)
 			}
 			if data, err := json.Marshal(storageParams); err != nil {
-				fmt.Println(err)
-				return
-			} else {
-				err = reporter.Report(&reporter.ReportParams{
-					URL: fmt.Sprintf("http://%s/update/",
-						params.Address,
-					),
-					Body: data,
-				})
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
+				return fmt.Errorf("json marshal failed: %w", err)
+			} else if err = reporter.Report(&reporter.ReportParams{
+				URL: fmt.Sprintf("http://%s/update/",
+					params.Address,
+				),
+				Body: data,
+			}); err != nil {
+				return fmt.Errorf("report failed: %w", err)
 			}
 		}
 	}
 
-	err = params.Storage.MetricReset(&storage.StorageParams{
-		Type: common.TypeMetricCounter,
+	if err = params.Storage.MetricReset(&models.StorageParams{
+		Type: TypeMetricCounter,
 		Name: "PollCount",
-	})
-	if err != nil {
-		fmt.Println(err)
+	}); err != nil {
+		return fmt.Errorf("metric reset failed: %w", err)
 	}
+	return nil
 }
 
 var (
@@ -136,6 +130,6 @@ func getFullMetricsCounterNamesList() (metricsNamesList []string) {
 }
 
 func init() {
-	metricsTypeNames[common.TypeMetricGauge] = getFullMetricsGaugeNamesList()
-	metricsTypeNames[common.TypeMetricCounter] = getFullMetricsCounterNamesList()
+	metricsTypeNames[TypeMetricGauge] = getFullMetricsGaugeNamesList()
+	metricsTypeNames[TypeMetricCounter] = getFullMetricsCounterNamesList()
 }

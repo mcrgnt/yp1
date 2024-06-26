@@ -1,10 +1,10 @@
-package metric
+package counter
 
 import (
 	"fmt"
 	"strconv"
 
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
 type Counter struct {
@@ -36,7 +36,7 @@ func fromAnyToInt64(value any) (int64, error) {
 		}
 		return _v, nil
 	default:
-		return 0, fmt.Errorf("convert to int64: %w %T", common.ErrIncompatibleMetricValueType, value)
+		return 0, fmt.Errorf("convert to int64: %w %T", models.ErrIncompatibleMetricValueType, value)
 	}
 }
 
@@ -46,7 +46,7 @@ func fromAnyToInt64WithCheckForNegative(value any) (v int64, err error) {
 		return
 	}
 	if v < 0 {
-		err = fmt.Errorf("convert to int64: %w %T", common.ErrIncompatibleMetricValue, value)
+		err = fmt.Errorf("convert to int64: %w %T", models.ErrIncompatibleMetricValue, value)
 	}
 	return
 }
@@ -76,7 +76,7 @@ func (t *Counter) Reset() {
 }
 
 func (t *Counter) Type() string {
-	return common.TypeMetricCounter
+	return models.TypeMetricCounter
 }
 
 func (t *Counter) String() string {

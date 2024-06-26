@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/mcrgnt/yp1/internal/common"
-	"github.com/mcrgnt/yp1/internal/storage"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
 func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
@@ -21,15 +20,14 @@ func (t *DefaultHandler) handlerValue(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(statusHeader)
 	}()
 
-	storageParams := &storage.StorageParams{
+	storageParams := &models.StorageParams{
 		Type: chi.URLParam(r, "type"),
 		Name: chi.URLParam(r, "name"),
 	}
 
-	err = t.storage.GetMetricString(storageParams)
-	if err != nil {
+	if err = t.storage.GetMetricString(storageParams); err != nil {
 		switch {
-		case errors.Is(err, common.ErrMetricNotFound):
+		case errors.Is(err, models.ErrMetricNotFound):
 			statusHeader = http.StatusNotFound
 		default:
 			statusHeader = http.StatusBadRequest
@@ -43,20 +41,20 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 	var (
 		err           error
 		statusHeader  = http.StatusOK
-		storageParams = &storage.StorageParams{}
+		storageParams = &models.StorageParams{}
 		returnBody    []byte
 	)
 
-	common.CheckAcceptEncodingGZIP(w, r)
-	w.Header().Set(common.ContentType, common.ApplicationJSON)
+	checkAcceptEncodingGZIP(w, r)
+	w.Header().Set(contentType, applicationJSON)
 
 	defer func() {
 		if len(returnBody) == 0 {
-			err = common.ErrMetricNotFound
+			err = models.ErrMetricNotFound
 		}
 		if err != nil {
 			switch {
-			case errors.Is(err, common.ErrMetricNotFound):
+			case errors.Is(err, models.ErrMetricNotFound):
 				statusHeader = http.StatusNotFound
 			default:
 				statusHeader = http.StatusBadRequest
@@ -66,9 +64,9 @@ func (t *DefaultHandler) handlerValueJSON(w http.ResponseWriter, r *http.Request
 		_, _ = w.Write(returnBody)
 	}()
 
-	switch r.Header.Get(common.ContentType) {
-	case common.ApplicationJSON:
-		if b, err := t.CheckCompress(r); err != nil {
+	switch r.Header.Get(contentType) {
+	case applicationJSON:
+		if b, err := t.checkCompress(r); err != nil {
 			return
 		} else {
 			if err = json.NewDecoder(b).Decode(storageParams); err != nil {

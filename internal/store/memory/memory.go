@@ -1,44 +1,44 @@
-package storage
+package memory
 
 import (
 	"encoding/json"
 	"fmt"
 	"sync"
 
-	"github.com/mcrgnt/yp1/internal/common"
-	"github.com/mcrgnt/yp1/internal/storage/internal/metric"
+	"github.com/mcrgnt/yp1/internal/store/metric"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
-type MemStorage struct {
-	Metrics map[string]metric.Metric
+type MemoryStorage struct {
+	Metrics map[string]models.Metric
 	emitter chan struct{}
 	mu      sync.Mutex
 }
 
-func NewMemStorage() *MemStorage {
-	return &MemStorage{
-		Metrics: map[string]metric.Metric{},
+func NewMemoryStorage() *MemoryStorage {
+	return &MemoryStorage{
+		Metrics: map[string]models.Metric{},
 	}
 }
 
-func (t *MemStorage) isMetricExistsValue(params *StorageParams) (metric.Metric, bool) {
+func (t *MemoryStorage) isMetricExistsValue(params *models.StorageParams) (models.Metric, bool) {
 	if v, ok := t.Metrics[params.Type+params.Name]; ok {
 		return v, true
 	}
 	return nil, false
 }
 
-func (t *MemStorage) isMetricExists(params *StorageParams) (exists bool) {
+func (t *MemoryStorage) isMetricExists(params *models.StorageParams) (exists bool) {
 	_, exists = t.isMetricExistsValue(params)
 	return
 }
 
-func (t *MemStorage) metricSetNoLock(params *StorageParams) error {
+func (t *MemoryStorage) metricSetNoLock(params *models.StorageParams) error {
 	if params.Name == "" {
-		return fmt.Errorf("metric set failed: %w", common.ErrEmptyMetricName)
+		return fmt.Errorf("metric set failed: %w", models.ErrEmptyMetricName)
 	}
-	if params.Type != common.TypeMetricCounter && params.Type != common.TypeMetricGauge {
-		return fmt.Errorf("metric set failed: %w <%s>", common.ErrNotImplementedMetricType, params.Type)
+	if params.Type != models.TypeMetricCounter && params.Type != models.TypeMetricGauge {
+		return fmt.Errorf("metric set failed: %w <%s>", models.ErrNotImplementedMetricType, params.Type)
 	}
 	if t.isMetricExists(params) {
 		if err := t.Metrics[params.Type+params.Name].Set(params.Value); err != nil {
@@ -58,7 +58,7 @@ func (t *MemStorage) metricSetNoLock(params *StorageParams) error {
 	return nil
 }
 
-func (t *MemStorage) MetricSet(params *StorageParams) error {
+func (t *MemoryStorage) MetricSet(params *models.StorageParams) error {
 	t.mu.Lock()
 	defer func() {
 		t.mu.Unlock()
@@ -72,7 +72,7 @@ func (t *MemStorage) MetricSet(params *StorageParams) error {
 	return nil
 }
 
-func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
+func (t *MemoryStorage) MetricReset(params *models.StorageParams) (err error) {
 	t.mu.Lock()
 	if t.isMetricExists(params) {
 		t.Metrics[params.Type+params.Name].Reset()
@@ -83,31 +83,31 @@ func (t *MemStorage) MetricReset(params *StorageParams) (err error) {
 	return
 }
 
-func (t *MemStorage) GetMetricString(params *StorageParams) (err error) {
+func (t *MemoryStorage) GetMetricString(params *models.StorageParams) (err error) {
 	t.mu.Lock()
 	if v, ok := t.isMetricExistsValue(params); ok {
 		params.String = v.String()
 		params.Type = v.Type()
 	} else {
-		err = fmt.Errorf("get metric string: %w %s", common.ErrMetricNotFound, params.Name)
+		err = fmt.Errorf("get metric string: %w %s", models.ErrMetricNotFound, params.Name)
 	}
 	t.mu.Unlock()
 	return
 }
 
-func (t *MemStorage) GetMetric(params *StorageParams) (err error) {
+func (t *MemoryStorage) GetMetric(params *models.StorageParams) (err error) {
 	t.mu.Lock()
 	if v, ok := t.isMetricExistsValue(params); ok {
 		params.Value = v.Value()
 		params.Type = v.Type()
 	} else {
-		err = fmt.Errorf("get metric: %w %s", common.ErrMetricNotFound, params.Name)
+		err = fmt.Errorf("get metric: %w %s", models.ErrMetricNotFound, params.Name)
 	}
 	t.mu.Unlock()
 	return
 }
 
-func (t *MemStorage) GetMetricAll() (data string) {
+func (t *MemoryStorage) GetMetricAll() (data string) {
 	t.mu.Lock()
 	for _, metric := range t.Metrics {
 		data += metric.Name() + ": " + metric.String() + "\r\n"
@@ -116,7 +116,7 @@ func (t *MemStorage) GetMetricAll() (data string) {
 	return
 }
 
-func (t *MemStorage) SetAllJSON(data []byte) error {
+func (t *MemoryStorage) SetAllJSON(data []byte) error {
 	t.mu.Lock()
 	defer func() {
 		t.mu.Unlock()
@@ -127,7 +127,7 @@ func (t *MemStorage) SetAllJSON(data []byte) error {
 	return nil
 }
 
-func (t *MemStorage) GetAllJSON() ([]byte, error) {
+func (t *MemoryStorage) GetAllJSON() ([]byte, error) {
 	t.mu.Lock()
 	defer func() {
 		t.mu.Unlock()
@@ -145,13 +145,13 @@ type memStorageMarshaler struct {
 	Type  string      `json:"type"`
 }
 
-func (t *MemStorage) UnmarshalJSON(data []byte) error {
+func (t *MemoryStorage) UnmarshalJSON(data []byte) error {
 	target := []*memStorageMarshaler{}
 	if err := json.Unmarshal(data, &target); err != nil {
 		return fmt.Errorf("unmarshal failed: %w", err)
 	} else {
 		for _, v := range target {
-			if err := t.metricSetNoLock(&StorageParams{
+			if err := t.metricSetNoLock(&models.StorageParams{
 				Value: v.Value,
 				Type:  v.Type,
 				Name:  v.Name,
@@ -163,7 +163,7 @@ func (t *MemStorage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (t *MemStorage) MarshalJSON() ([]byte, error) {
+func (t *MemoryStorage) MarshalJSON() ([]byte, error) {
 	target := []*memStorageMarshaler{}
 	for _, v := range t.Metrics {
 		target = append(target, &memStorageMarshaler{
@@ -179,7 +179,7 @@ func (t *MemStorage) MarshalJSON() ([]byte, error) {
 	}
 }
 
-func (t *MemStorage) Emitter() chan struct{} {
+func (t *MemoryStorage) Emitter() chan struct{} {
 	t.emitter = make(chan struct{})
 	return t.emitter
 }
