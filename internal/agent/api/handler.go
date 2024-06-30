@@ -60,14 +60,14 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 		logger:  params.Logger,
 	}
 
+	handler.R.Use(middleware.Logger)
 	handler.R.Group(func(r chi.Router) {
-		r.Use(middleware.Logger)
 		r.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
 		r.Post("/update/{type}/", handler.handlerUpdate)
 		r.Get("/value/{type}/{name}", handler.handlerValue)
 	})
 	handler.R.Group(func(r chi.Router) {
-		r.Use(middleware.Logger, middleware.Compress(compressLevel, contentTypeToCompressList...))
+		r.Use(middleware.Compress(compressLevel, contentTypeToCompressList...))
 		r.Post("/update/", handler.handlerUpdateJSON)
 		r.Post("/value/", handler.handlerValueJSON)
 		r.Get("/", handler.handlerRoot)
