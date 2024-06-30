@@ -2,6 +2,7 @@ package filer
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -44,7 +45,9 @@ func (t *Filer) periodicWriteContext(ctx context.Context, duration time.Duration
 			case <-ctx.Done():
 				return
 			case <-emitter:
-				t.Write()
+				if err := t.Write(); err != nil {
+					t.logger.Error().Msgf("write failed: %s", err)
+				}
 			}
 		}
 	} else {
@@ -55,28 +58,32 @@ func (t *Filer) periodicWriteContext(ctx context.Context, duration time.Duration
 				tick.Stop()
 				return
 			case <-tick.C:
-				t.Write()
+				if err := t.Write(); err != nil {
+					t.logger.Error().Msgf("write failed: %s", err)
+				}
 			}
 		}
 	}
 }
 
-func (t *Filer) Read() {
+func (t *Filer) Read() error {
 	if data, err := os.ReadFile(t.filePath); err != nil {
-		t.logger.Error().Msgf("read file failed: %s", err)
+		return fmt.Errorf("read file failed: %w", err)
 	} else {
 		if err := t.storage.SetAllJSON(data); err != nil {
-			t.logger.Error().Msgf("set all json failed: %s", err)
+			return fmt.Errorf("set all json failed: %w", err)
 		}
 	}
+	return nil
 }
 
-func (t *Filer) Write() {
+func (t *Filer) Write() error {
 	if data, err := t.storage.GetAllJSON(); err != nil {
-		t.logger.Error().Msgf("get all json failed: %s", err)
+		return fmt.Errorf("get all json failed: %w", err)
 	} else {
 		if err := os.WriteFile(t.filePath, data, FilePermissions); err != nil {
-			t.logger.Error().Msgf("write file failed: %s", err)
+			return fmt.Errorf("write file failed: %w", err)
 		}
 	}
+	return nil
 }

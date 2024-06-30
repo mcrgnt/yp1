@@ -47,7 +47,9 @@ func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, er
 
 func (t *Server) Run(ctx context.Context) (chan struct{}, error) {
 	if t.cfg.Restore && t.cfg.FileStoragePath != "" {
-		t.filer.Read()
+		if err := t.filer.Read(); err != nil {
+			return nil, fmt.Errorf("read failed: %w", err)
+		}
 	}
 
 	graseful := make(chan struct{})
