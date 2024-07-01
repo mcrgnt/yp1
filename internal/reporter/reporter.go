@@ -1,6 +1,7 @@
 package reporter
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -27,19 +28,22 @@ type ReportParams struct {
 	Body   []byte
 }
 
-func (t *Reporter) report(params *ReportParams) (string, error) {
+func (t *Reporter) report(params *ReportParams) (data string, err error) {
 	var (
 		buf       io.Reader
-		err       error
 		req       *http.Request
 		resp      *http.Response
 		bodyBytes []byte
 	)
+
 	if buf, err = gzip.Compress(params.Body); err != nil {
-		return "", fmt.Errorf("compress failed: %w", err)
+		err = fmt.Errorf("compress failed: %w", err)
+		return
 	}
+
 	if req, err = http.NewRequest(http.MethodPost, params.URL, buf); err != nil {
-		return "", fmt.Errorf("new request failed: %w", err)
+		err = fmt.Errorf("new request failed: %w", err)
+		return
 	}
 
 	req.Header.Set(contentType, applicationJSON)
@@ -47,18 +51,22 @@ func (t *Reporter) report(params *ReportParams) (string, error) {
 	req.Header.Set(acceptEncoding, gZip)
 
 	if resp, err = http.DefaultClient.Do(req); err != nil {
-		return "", fmt.Errorf("report response failed: %w", err)
+		err = fmt.Errorf("report response failed: %w", err)
+		return
 	}
 	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			params.Logger.Error().Msg(err.Error())
+		if e := resp.Body.Close(); e != nil {
+			data = ""
+			err = errors.Join(err, fmt.Errorf("body close failed: %w", e))
 		}
 	}()
 
 	if bodyBytes, err = io.ReadAll(resp.Body); err != nil {
-		return "", fmt.Errorf("report response failed: %w", err)
+		err = fmt.Errorf("report response failed: %w", err)
+		return
 	}
-	return string(bodyBytes), nil
+	data = string(bodyBytes)
+	return
 }
 
 func Report(params *ReportParams) (err error) {

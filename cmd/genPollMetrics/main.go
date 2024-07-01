@@ -3,6 +3,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"reflect"
 	"text/template"
@@ -42,11 +43,15 @@ type data struct {
 func main() {
 	f, err := os.Create("pollMetrics.go")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
-	datas := []data{}
+	datas := make([]data, len(metrics.PollMetricsFromMemStatsList))
 	val := reflect.ValueOf(metrics.MemStats).Elem()
 	for _, name := range metrics.PollMetricsFromMemStatsList {
 		switch val.FieldByName(name).Interface().(type) {
@@ -60,8 +65,9 @@ func main() {
 				Name:  name,
 				Value: "MemStats." + name,
 			})
-
 		}
 	}
-	tmpl.Execute(f, datas)
+	if err = tmpl.Execute(f, datas); err != nil {
+		log.Fatal(err)
+	}
 }

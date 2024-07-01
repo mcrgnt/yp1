@@ -59,8 +59,8 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 		R:       chi.NewRouter(),
 		logger:  params.Logger,
 	}
-
 	handler.R.Use(middleware.Logger)
+
 	handler.R.Group(func(r chi.Router) {
 		r.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
 		r.Post("/update/{type}/", handler.handlerUpdate)
@@ -78,7 +78,6 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 func (t *DefaultHandler) checkCompress(r *http.Request) (io.Reader, error) {
 	if checkContentEncodingGZIP(r) {
 		if b, err := gzip.Decompress(&gzip.DecompressParams{
-			Logger: t.logger,
 			Reader: r.Body,
 		}); err != nil {
 			return nil, fmt.Errorf("decompress failed: %w", err)

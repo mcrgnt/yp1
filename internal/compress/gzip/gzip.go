@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-
-	"github.com/rs/zerolog"
 )
 
 const (
@@ -20,7 +18,6 @@ func Compress(data []byte) (io.Reader, error) {
 	if _, err := g.Write(data); err != nil {
 		return nil, fmt.Errorf("write failed: %w", err)
 	}
-
 	if err := g.Close(); err != nil {
 		return nil, fmt.Errorf("close failed: %w", err)
 	}
@@ -29,29 +26,33 @@ func Compress(data []byte) (io.Reader, error) {
 
 type DecompressParams struct {
 	Reader io.Reader
-	Logger *zerolog.Logger
 }
 
-func Decompress(params *DecompressParams) (io.Reader, error) {
-	if gzipReader, err := gzip.NewReader(params.Reader); err != nil {
-		return nil, fmt.Errorf("new reader failed: %w", err)
-	} else {
-		defer func() {
-			if err := gzipReader.Close(); err != nil {
-				params.Logger.Error().Msg(err.Error())
-			}
-		}()
-
-		var b bytes.Buffer
-		for {
-			_, err := io.CopyN(&b, gzipReader, CopyBytes)
-			if err != nil {
-				if errors.Is(err, io.EOF) {
-					break
-				}
-				return nil, fmt.Errorf("copy failed: %w", err)
-			}
-		}
-		return &b, nil
+func Decompress(params *DecompressParams) (reader io.Reader, err error) {
+	var (
+		gzipReader *gzip.Reader
+	)
+	if gzipReader, err = gzip.NewReader(params.Reader); err != nil {
+		err = fmt.Errorf("new reader failed: %w", err)
+		return
 	}
+	defer func() {
+		if e := gzipReader.Close(); e != nil {
+			reader = nil
+			err = errors.Join(err, fmt.Errorf("gzip reader close failed: %w", e))
+		}
+	}()
+
+	var b bytes.Buffer
+	for {
+		if _, e := io.CopyN(&b, gzipReader, CopyBytes); e != nil {
+			if errors.Is(e, io.EOF) {
+				break
+			}
+			err = errors.Join(err, fmt.Errorf("copyn failed: %w", e))
+			return
+		}
+	}
+	reader = &b
+	return
 }

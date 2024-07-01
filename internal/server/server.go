@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/mcrgnt/yp1/internal/agent/api"
@@ -12,9 +13,10 @@ import (
 )
 
 type Server struct {
-	cfg   *config.Config
-	api   *api.API
-	filer *filer.Filer
+	cfg    *config.Config
+	api    *api.API
+	filer  *filer.Filer
+	logger *zerolog.Logger
 }
 
 type NewServerParams struct {
@@ -22,7 +24,9 @@ type NewServerParams struct {
 }
 
 func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, error) {
-	server := &Server{}
+	server := &Server{
+		logger: params.Logger,
+	}
 	if cfg, err := config.NewConfig(); err != nil {
 		return nil, fmt.Errorf("new server context failed: %w", err)
 	} else {
@@ -45,31 +49,38 @@ func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, er
 	return server, nil
 }
 
-func (t *Server) Run(ctx context.Context) (chan struct{}, error) {
+func (t *Server) Run(ctx context.Context) (graceful chan struct{}, err error) {
 	if t.cfg.Restore && t.cfg.FileStoragePath != "" {
-		if err := t.filer.Read(); err != nil {
-			return nil, fmt.Errorf("read failed: %w", err)
+		if e := t.filer.Read(); e != nil {
+			err = fmt.Errorf("read failed: %w", e)
+			return
 		}
 	}
 
-	graseful := make(chan struct{})
+	graceful = make(chan struct{})
 
 	go func() {
 		<-ctx.Done()
-		t.shutdown(context.Background(), graseful)
+		if e := t.shutdown(context.Background(), graceful); e != nil {
+			err = errors.Join(err, fmt.Errorf("srv shutdown failed: %w", e))
+		}
 	}()
 
-	err := t.api.Run()
-	if err != nil {
-		return graseful, fmt.Errorf("server run: %w", err)
+	if err = t.api.Run(); err != nil {
+		return graceful, fmt.Errorf("server run: %w", err)
 	}
-	return graseful, nil
+	return graceful, nil
 }
 
-func (t *Server) shutdown(ctx context.Context, graseful chan struct{}) {
-	t.api.Shutdown(ctx)
+func (t *Server) shutdown(ctx context.Context, graseful chan struct{}) (err error) {
+	if e := t.api.Shutdown(ctx); e != nil {
+		err = errors.Join(err, fmt.Errorf("srv shutdown failed: %w", e))
+	}
 	if t.cfg.FileStoragePath != "" {
-		t.filer.Write()
+		if e := t.filer.Write(); e != nil {
+			err = errors.Join(err, fmt.Errorf("write failed: %w", e))
+		}
 	}
 	close(graseful)
+	return
 }

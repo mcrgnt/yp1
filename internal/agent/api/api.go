@@ -35,8 +35,11 @@ func NewAPI(params *NewAPIParams) (api *API) {
 	return
 }
 
-func (t *API) Shutdown(ctx context.Context) {
-	_ = t.srv.Shutdown(ctx)
+func (t *API) Shutdown(ctx context.Context) error {
+	if err := t.srv.Shutdown(ctx); err != nil {
+		return fmt.Errorf("srv shutdown failed: %w", err)
+	}
+	return nil
 }
 
 func (t *API) Run() error {

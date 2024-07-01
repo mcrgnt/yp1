@@ -2,6 +2,7 @@ package filer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -67,6 +68,9 @@ func (t *Filer) periodicWriteContext(ctx context.Context, duration time.Duration
 }
 
 func (t *Filer) Read() error {
+	if _, err := os.Stat(t.filePath); errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
 	if data, err := os.ReadFile(t.filePath); err != nil {
 		return fmt.Errorf("read file failed: %w", err)
 	} else {
