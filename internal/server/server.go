@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mcrgnt/yp1/internal/agent/api"
+	"github.com/mcrgnt/yp1/internal/api"
 	"github.com/mcrgnt/yp1/internal/filer"
 	"github.com/mcrgnt/yp1/internal/server/internal/config"
 	"github.com/mcrgnt/yp1/internal/store/store"
