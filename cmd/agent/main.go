@@ -17,8 +17,6 @@ func main() {
 	}); err != nil {
 		log.Fatal().Msgf("new agent failed: %v", err)
 	} else {
-		if err := agt.Run(ctx); err != nil {
-			log.Fatal().Msgf("agent run failed: %v", err)
-		}
+		agt.Run(ctx)
 	}
 }

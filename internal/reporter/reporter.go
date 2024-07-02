@@ -51,7 +51,7 @@ func (t *Reporter) report(params *ReportParams) (data string, err error) {
 	req.Header.Set(acceptEncoding, gZip)
 
 	if resp, err = http.DefaultClient.Do(req); err != nil {
-		err = fmt.Errorf("report response failed: %w", err)
+		err = fmt.Errorf("request do: %w", err)
 		return
 	}
 	defer func() {
@@ -62,7 +62,7 @@ func (t *Reporter) report(params *ReportParams) (data string, err error) {
 	}()
 
 	if bodyBytes, err = io.ReadAll(resp.Body); err != nil {
-		err = fmt.Errorf("report response failed: %w", err)
+		err = fmt.Errorf("read all failed: %w", err)
 		return
 	}
 	data = string(bodyBytes)
