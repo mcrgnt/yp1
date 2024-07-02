@@ -43,21 +43,24 @@ func checkAcceptEncodingGZIP(w http.ResponseWriter, r *http.Request) {
 }
 
 type DefaultHandler struct {
-	storage models.Storage
-	R       *chi.Mux
-	logger  *zerolog.Logger
+	storage     models.Storage
+	R           *chi.Mux
+	logger      *zerolog.Logger
+	databaseDSN string
 }
 
 type NewDefaultHandlerParams struct {
-	Storage models.Storage
-	Logger  *zerolog.Logger
+	Storage     models.Storage
+	Logger      *zerolog.Logger
+	DatabaseDSN string
 }
 
 func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler) {
 	handler = &DefaultHandler{
-		storage: params.Storage,
-		R:       chi.NewRouter(),
-		logger:  params.Logger,
+		storage:     params.Storage,
+		R:           chi.NewRouter(),
+		logger:      params.Logger,
+		databaseDSN: params.DatabaseDSN,
 	}
 	handler.R.Use(middleware.Logger)
 
@@ -65,6 +68,7 @@ func NewDefaultHandler(params *NewDefaultHandlerParams) (handler *DefaultHandler
 		r.Post("/update/{type}/{name}/{value}", handler.handlerUpdate)
 		r.Post("/update/{type}/", handler.handlerUpdate)
 		r.Get("/value/{type}/{name}", handler.handlerValue)
+		r.Get("/ping", handler.handlerPing)
 	})
 	handler.R.Group(func(r chi.Router) {
 		r.Use(middleware.Compress(compressLevel, contentTypeToCompressList...))

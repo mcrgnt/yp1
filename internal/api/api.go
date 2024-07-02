@@ -15,9 +15,10 @@ type API struct {
 }
 
 type NewAPIParams struct {
-	Storage models.Storage
-	Logger  *zerolog.Logger
-	Address string
+	Storage     models.Storage
+	Logger      *zerolog.Logger
+	Address     string
+	DatabaseDSN string
 }
 
 func NewAPI(params *NewAPIParams) (api *API) {
@@ -29,8 +30,9 @@ func NewAPI(params *NewAPIParams) (api *API) {
 	}
 
 	api.srv.Handler = NewDefaultHandler(&NewDefaultHandlerParams{
-		Storage: params.Storage,
-		Logger:  params.Logger,
+		Storage:     params.Storage,
+		Logger:      params.Logger,
+		DatabaseDSN: params.DatabaseDSN,
 	}).R
 	return
 }

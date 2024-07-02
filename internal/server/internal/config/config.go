@@ -18,6 +18,7 @@ type Config struct {
 	StorageType     string `env:"MEMORY"`
 	StoreInterval   string `env:"STORE_INTERVAL"`
 	FileStoragePath string `env:"FILE_STORAGE_PATH"`
+	DataBaseDSN     string `env:"DATABASE_DSN"`
 	Restore         bool   `env:"RESTORE"`
 }
 
@@ -30,10 +31,11 @@ func (t *Config) paramsParseEnv() error {
 }
 
 func (t *Config) paramsParseFlag() {
-	flag.StringVar(&t.Address, "a", "localhost:8080", "")
-	flag.StringVar(&t.StoreInterval, "i", "300", "")
-	flag.StringVar(&t.FileStoragePath, "f", "/tmp/metrics-db.json", "")
-	flag.BoolVar(&t.Restore, "r", true, "")
+	flag.StringVar(&t.Address, "a", "localhost:8080", "The interface and port that the server listens on.")
+	flag.StringVar(&t.StoreInterval, "i", "300", "The interval for saving metrics to disk.")
+	flag.StringVar(&t.FileStoragePath, "f", "/tmp/metrics-db.json", "Path to the file to save the metrics.")
+	flag.BoolVar(&t.Restore, "r", true, "Whether to read metrics from a file when the server starts.")
+	flag.StringVar(&t.DataBaseDSN, "d", "", "DSN line for connecting to the database.")
 	flag.Parse()
 }
 
