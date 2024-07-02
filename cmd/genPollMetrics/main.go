@@ -3,6 +3,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"reflect"
 	"text/template"
@@ -17,22 +18,26 @@ package metrics
 import (
 	"fmt"
 
-	"github.com/mcrgnt/yp1/internal/storage"
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
-func pollMetrics(params *PollMetricsParams) {
+const (
+	errMetricSetFaild = "metric set failed: %w"
+)
+
+func pollMetrics(params *PollMetricsParams) error {
 {{range .}}	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.MetricTypeGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "{{.Name}}",
 			Value: {{.Value}},
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
-{{end}}}
+{{end}}
+	return nil
+}
 `))
 )
 
@@ -44,9 +49,13 @@ type data struct {
 func main() {
 	f, err := os.Create("pollMetrics.go")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	datas := []data{}
 	val := reflect.ValueOf(metrics.MemStats).Elem()
@@ -62,8 +71,9 @@ func main() {
 				Name:  name,
 				Value: "MemStats." + name,
 			})
-
 		}
 	}
-	tmpl.Execute(f, datas)
+	if err = tmpl.Execute(f, datas); err != nil {
+		log.Fatal(err)
+	}
 }

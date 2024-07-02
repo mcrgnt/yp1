@@ -1,34 +1,71 @@
 package reporter
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/mcrgnt/yp1/internal/compress/gzip"
+	"github.com/rs/zerolog"
+)
+
+const (
+	contentType     = "Content-Type"
+	contentEncoding = "Content-Encoding"
+	acceptEncoding  = "Accept-Encoding"
+
+	applicationJSON = "application/json"
+	textHTML        = "text/html"
+	gZip            = "gzip"
 )
 
 type Reporter struct{}
 
 type ReportParams struct {
-	URL string
+	Logger *zerolog.Logger
+	URL    string
+	Body   []byte
 }
 
-func (t *Reporter) report(params *ReportParams) (response string, err error) {
-	resp, err := http.Post(params.URL, "text/plain", nil)
-	if err != nil {
-		err = fmt.Errorf("report response: %w", err)
+func (t *Reporter) report(params *ReportParams) (data string, err error) {
+	var (
+		buf       io.Reader
+		req       *http.Request
+		resp      *http.Response
+		bodyBytes []byte
+	)
+
+	if buf, err = gzip.Compress(params.Body); err != nil {
+		err = fmt.Errorf("compress failed: %w", err)
+		return
+	}
+
+	if req, err = http.NewRequest(http.MethodPost, params.URL, buf); err != nil {
+		err = fmt.Errorf("new request failed: %w", err)
+		return
+	}
+
+	req.Header.Set(contentType, applicationJSON)
+	req.Header.Set(contentEncoding, gZip)
+	req.Header.Set(acceptEncoding, gZip)
+
+	if resp, err = http.DefaultClient.Do(req); err != nil {
+		err = fmt.Errorf("request do: %w", err)
 		return
 	}
 	defer func() {
-		_ = resp.Body.Close()
+		if e := resp.Body.Close(); e != nil {
+			data = ""
+			err = errors.Join(err, fmt.Errorf("body close failed: %w", e))
+		}
 	}()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		err = fmt.Errorf("report response: %w", err)
+	if bodyBytes, err = io.ReadAll(resp.Body); err != nil {
+		err = fmt.Errorf("read all failed: %w", err)
 		return
 	}
-
-	response = string(bodyBytes)
+	data = string(bodyBytes)
 	return
 }
 

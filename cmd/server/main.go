@@ -3,24 +3,28 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 
 	"github.com/mcrgnt/yp1/internal/server"
+	"github.com/rs/zerolog"
 )
 
 func main() {
+	log := zerolog.New(zerolog.SyncWriter(os.Stdout)).Level(zerolog.DebugLevel)
+
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
-	srv, err := server.NewServer()
+	srv, err := server.NewServerContext(ctx, &server.NewServerParams{
+		Logger: &log,
+	})
 	if err != nil {
-		log.Fatalf("new server: %v", err)
+		log.Fatal().Msgf("new server: %v", err)
 	}
 
 	graseful, err := srv.Run(ctx)
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatalf("run server: %v", err)
+		log.Fatal().Msgf("run server: %v", err)
 	}
 	<-graseful
 }

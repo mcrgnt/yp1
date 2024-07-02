@@ -4,279 +4,257 @@ package metrics
 import (
 	"fmt"
 
-	"github.com/mcrgnt/yp1/internal/storage"
-	"github.com/mcrgnt/yp1/internal/common"
+	"github.com/mcrgnt/yp1/internal/store/models"
 )
 
-func pollMetrics(params *PollMetricsParams) {
+const (
+	errMetricSetFaild = "metric set failed: %w"
+)
+
+func pollMetrics(params *PollMetricsParams) error {
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "Alloc",
 			Value: float64(MemStats.Alloc),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "BuckHashSys",
 			Value: float64(MemStats.BuckHashSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "Frees",
 			Value: float64(MemStats.Frees),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "GCCPUFraction",
 			Value: MemStats.GCCPUFraction,
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "GCSys",
 			Value: float64(MemStats.GCSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapAlloc",
 			Value: float64(MemStats.HeapAlloc),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapIdle",
 			Value: float64(MemStats.HeapIdle),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapInuse",
 			Value: float64(MemStats.HeapInuse),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapObjects",
 			Value: float64(MemStats.HeapObjects),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapReleased",
 			Value: float64(MemStats.HeapReleased),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "HeapSys",
 			Value: float64(MemStats.HeapSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "LastGC",
 			Value: float64(MemStats.LastGC),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "Lookups",
 			Value: float64(MemStats.Lookups),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "MCacheInuse",
 			Value: float64(MemStats.MCacheInuse),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "MCacheSys",
 			Value: float64(MemStats.MCacheSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "MSpanInuse",
 			Value: float64(MemStats.MSpanInuse),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "MSpanSys",
 			Value: float64(MemStats.MSpanSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "Mallocs",
 			Value: float64(MemStats.Mallocs),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "NextGC",
 			Value: float64(MemStats.NextGC),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "NumForcedGC",
 			Value: float64(MemStats.NumForcedGC),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "NumGC",
 			Value: float64(MemStats.NumGC),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "OtherSys",
 			Value: float64(MemStats.OtherSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "PauseTotalNs",
 			Value: float64(MemStats.PauseTotalNs),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "StackInuse",
 			Value: float64(MemStats.StackInuse),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "StackSys",
 			Value: float64(MemStats.StackSys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "Sys",
 			Value: float64(MemStats.Sys),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
-		err := params.Storage.MetricSet(&storage.StorageParams{
-			Type: common.TypeMetricGauge,
+		if err := params.Storage.MetricSet(&models.StorageParams{
+			Type: TypeMetricGauge,
 			Name: "TotalAlloc",
 			Value: float64(MemStats.TotalAlloc),
-		})
-		if err !=nil {
-			fmt.Println(err)
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
+
+	return nil
 }

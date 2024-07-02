@@ -26,3 +26,4 @@ vendor/
 
 # Lint
 golangci-lint
+./golangci-lint

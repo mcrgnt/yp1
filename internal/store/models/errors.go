@@ -1,11 +1,6 @@
-package common
+package models
 
 import "errors"
-
-const (
-	TypeMetricGauge   = "gauge"
-	TypeMetricCounter = "counter"
-)
 
 var (
 	ErrNotImplementedMetricType    = errors.New("not implemented metric type")
