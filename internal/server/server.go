@@ -35,9 +35,10 @@ func NewServerContext(ctx context.Context, params *NewServerParams) (*Server, er
 			Type: server.cfg.StorageType,
 		})
 		server.api = api.NewAPI(&api.NewAPIParams{
-			Address: server.cfg.Address,
-			Storage: strg,
-			Logger:  params.Logger,
+			Address:     server.cfg.Address,
+			Storage:     strg,
+			Logger:      params.Logger,
+			DatabaseDSN: server.cfg.DataBaseDSN,
 		})
 		server.filer = filer.NewFilerContext(ctx, &filer.NewFilerParams{
 			FilePath:      server.cfg.FileStoragePath,

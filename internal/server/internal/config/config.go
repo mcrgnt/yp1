@@ -18,8 +18,8 @@ type Config struct {
 	StorageType     string `env:"MEMORY"`
 	StoreInterval   string `env:"STORE_INTERVAL"`
 	FileStoragePath string `env:"FILE_STORAGE_PATH"`
-	Restore         bool   `env:"RESTORE"`
 	DataBaseDSN     string `env:"DATABASE_DSN"`
+	Restore         bool   `env:"RESTORE"`
 }
 
 func (t *Config) paramsParseEnv() error {

@@ -41,8 +41,12 @@ golangci-lint-clean:
 
 .PHONY: server
 server:
-	go generate ./...; cd cmd/server; go run .
+	go generate ./...; cd cmd/server; DATABASE_DSN="postgres://yp1:yp1@localhost:5432/yp1" go run .
 
 .PHONY: agent
 agent:
 	go generate ./...; cd cmd/agent; go run .
+
+.PHONY: postgres
+postgres:
+	docker run -d -p5432:5432 -e POSTGRES_PASSWORD=yp1 -e POSTGRES_PASSWORD=yp1 -e POSTGRES_USER=yp1 -e POSTGRES_DB=yp1 postgres
