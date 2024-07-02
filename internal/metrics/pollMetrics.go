@@ -2,7 +2,13 @@
 package metrics
 
 import (
+	"fmt"
+
 	"github.com/mcrgnt/yp1/internal/store/models"
+)
+
+const (
+	errMetricSetFaild = "metric set failed: %w"
 )
 
 func pollMetrics(params *PollMetricsParams) error {
@@ -11,8 +17,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "Alloc",
 			Value: float64(MemStats.Alloc),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -20,8 +26,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "BuckHashSys",
 			Value: float64(MemStats.BuckHashSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -29,8 +35,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "Frees",
 			Value: float64(MemStats.Frees),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -38,8 +44,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "GCCPUFraction",
 			Value: MemStats.GCCPUFraction,
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -47,8 +53,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "GCSys",
 			Value: float64(MemStats.GCSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -56,8 +62,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapAlloc",
 			Value: float64(MemStats.HeapAlloc),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -65,8 +71,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapIdle",
 			Value: float64(MemStats.HeapIdle),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -74,8 +80,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapInuse",
 			Value: float64(MemStats.HeapInuse),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -83,8 +89,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapObjects",
 			Value: float64(MemStats.HeapObjects),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -92,8 +98,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapReleased",
 			Value: float64(MemStats.HeapReleased),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -101,8 +107,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "HeapSys",
 			Value: float64(MemStats.HeapSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -110,8 +116,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "LastGC",
 			Value: float64(MemStats.LastGC),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -119,8 +125,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "Lookups",
 			Value: float64(MemStats.Lookups),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -128,8 +134,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "MCacheInuse",
 			Value: float64(MemStats.MCacheInuse),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -137,8 +143,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "MCacheSys",
 			Value: float64(MemStats.MCacheSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -146,8 +152,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "MSpanInuse",
 			Value: float64(MemStats.MSpanInuse),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -155,8 +161,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "MSpanSys",
 			Value: float64(MemStats.MSpanSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -164,8 +170,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "Mallocs",
 			Value: float64(MemStats.Mallocs),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -173,8 +179,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "NextGC",
 			Value: float64(MemStats.NextGC),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -182,8 +188,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "NumForcedGC",
 			Value: float64(MemStats.NumForcedGC),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -191,8 +197,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "NumGC",
 			Value: float64(MemStats.NumGC),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -200,8 +206,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "OtherSys",
 			Value: float64(MemStats.OtherSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -209,8 +215,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "PauseTotalNs",
 			Value: float64(MemStats.PauseTotalNs),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -218,8 +224,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "StackInuse",
 			Value: float64(MemStats.StackInuse),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -227,8 +233,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "StackSys",
 			Value: float64(MemStats.StackSys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -236,8 +242,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "Sys",
 			Value: float64(MemStats.Sys),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 	{
@@ -245,8 +251,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "TotalAlloc",
 			Value: float64(MemStats.TotalAlloc),
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 

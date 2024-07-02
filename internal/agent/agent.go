@@ -46,14 +46,14 @@ func NewAgent(params *NewAgentParams) (*Agent, error) {
 	return agent, nil
 }
 
-func (t *Agent) Run(ctx context.Context) {
+func (t *Agent) Run(ctx context.Context) error {
 	pollTicker := time.NewTicker(t.pollInterval)
 	reportTicker := time.NewTicker(t.reportInterval)
 
 	if err := metrics.PollMetrics(&metrics.PollMetricsParams{
 		Storage: t.Storage,
 	}); err != nil {
-		t.logger.Error().Msgf("poll metrics failed: %s", err)
+		return fmt.Errorf("poll metrics failed: %w", err)
 	}
 
 	for {
@@ -62,17 +62,17 @@ func (t *Agent) Run(ctx context.Context) {
 			if err := metrics.PollMetrics(&metrics.PollMetricsParams{
 				Storage: t.Storage,
 			}); err != nil {
-				t.logger.Error().Msgf("poll metrics failed: %s", err)
+				return fmt.Errorf("poll metrics failed: %w", err)
 			}
 		case <-reportTicker.C:
 			if err := metrics.ReportMetrics(&metrics.ReportMetricsParams{
 				Storage: t.Storage,
 				Address: t.address,
 			}); err != nil {
-				t.logger.Error().Msgf("report metrics failed: %s", err)
+				return fmt.Errorf("report metrics failed: %w", err)
 			}
 		case <-ctx.Done():
-			return
+			return nil
 		}
 	}
 }

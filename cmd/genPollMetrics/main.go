@@ -16,7 +16,13 @@ var (
 package metrics
 
 import (
+	"fmt"
+
 	"github.com/mcrgnt/yp1/internal/store/models"
+)
+
+const (
+	errMetricSetFaild = "metric set failed: %w"
 )
 
 func pollMetrics(params *PollMetricsParams) error {
@@ -25,8 +31,8 @@ func pollMetrics(params *PollMetricsParams) error {
 			Type: TypeMetricGauge,
 			Name: "{{.Name}}",
 			Value: {{.Value}},
-		}); err !=nil {
-			return err
+		}); err != nil {
+			return fmt.Errorf(errMetricSetFaild,  err)
 		}
 	}
 {{end}}
@@ -51,7 +57,7 @@ func main() {
 		}
 	}()
 
-	datas := make([]data, len(metrics.PollMetricsFromMemStatsList))
+	datas := []data{}
 	val := reflect.ValueOf(metrics.MemStats).Elem()
 	for _, name := range metrics.PollMetricsFromMemStatsList {
 		switch val.FieldByName(name).Interface().(type) {
